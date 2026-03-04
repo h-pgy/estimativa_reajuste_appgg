@@ -68,7 +68,7 @@ class CalculadoraFatorInflacao:
 
         if not dados:
             raise ValueError(f"Sem dados disponíveis para o período {data_inicio} a {data_fim}.")
-            
+        print(f'Dados obtidos com sucesso na URL: {response.url}')
         return dados
 
     def calcular_fator(self, data_inicio, data_fim):
