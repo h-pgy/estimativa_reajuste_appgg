@@ -101,6 +101,7 @@ class ServidorValores(ServidorBase):
     contribuicao_iprem: float = Field(ge=0)
     contribuicao_inss: float = Field(ge=0)
     previdencia_complementar: float = Field(ge=0)
+    valor_total: float = Field(gt=0)
 
     @model_validator(mode='after')
     def verificar_contribuicoes_previdenciarias(self)-> Self:
