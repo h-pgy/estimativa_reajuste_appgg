@@ -1,5 +1,6 @@
-from pydantic import BaseModel, field_validator, ValidationInfo
+from pydantic import BaseModel, field_validator, Field, model_validator
 from datetime import datetime
+from typing import Self
 
 class ServidorBase(BaseModel):
 
@@ -9,7 +10,7 @@ class ServidorBase(BaseModel):
     secretaria: str
     nivel: int
     dt_inicio_exercicio: datetime
-    rrps: bool
+    rpps: bool
 
 
     @field_validator('rf')
@@ -90,6 +91,37 @@ class ServidorBase(BaseModel):
             raise ValueError('Nivel deve ser inteiro positivo')
         
         return v
+    
+class ServidorValores(ServidorBase):
+
+    vencimento: float = Field(gt=0)
+    decimo_terceiro: float = Field(gt=0)
+    terco_ferias: float = Field(gt=0)
+    vale_alimentacao: float = Field(ge=0)
+    contribuicao_iprem: float = Field(ge=0)
+    contribuicao_inss: float = Field(ge=0)
+    previdencia_complementar: float = Field(ge=0)
+
+    @model_validator(mode='after')
+    def verificar_contribuicoes_previdenciarias(self)-> Self:
+
+        iprem = self.contribuicao_iprem
+        inss = self.contribuicao_inss
+        complementar= self.previdencia_complementar
+        if iprem == 0 and inss == 0:
+            raise ValueError("Deve contribuir para o IPREM ou para o INSS")
+        
+        if iprem > 0 and inss > 0:
+            raise ValueError("Não pode contribuir para o IPREM e para o INSS ao mesmo tempo")
+
+        if iprem > 0 and complementar > 0:
+            raise ValueError("Se contribui para o IPREM não pode ter previdência complementar")
+
+
+        if self.rpps and iprem <= 0:
+            raise ValueError("Se é do regime próprio de previdencia (RPPS) deve contribuir para o IPREM")
+        
+        return self
 
 
     
