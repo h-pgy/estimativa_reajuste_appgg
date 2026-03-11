@@ -1,4 +1,6 @@
 from pydantic import BaseModel, field_validator
+import pandera.pandas as pa
+from pandera.engines.pandas_engine import PydanticModel
 
 class Tabela(BaseModel):
 
@@ -30,3 +32,9 @@ class Tabela(BaseModel):
         v = round(v, 2)
         
         return v
+
+class TabelaDataframe(pa.DataFrameModel):
+
+    class Config:
+        dtype = PydanticModel(Tabela)
+        coerce = True

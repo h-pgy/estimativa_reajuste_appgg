@@ -1,4 +1,6 @@
 from pydantic import BaseModel, field_validator, Field, model_validator
+import pandera.pandas as pa
+from pandera.engines.pandas_engine import PydanticModel
 from datetime import datetime
 from typing import Self
 
@@ -92,6 +94,12 @@ class ServidorBase(BaseModel):
         
         return v
     
+class ServidorBaseDataframe(pa.DataFrameModel):
+
+    class Config:
+        dtype = PydanticModel(ServidorBase)
+        coerce = True
+    
 class ServidorValores(ServidorBase):
 
     vencimento: float = Field(gt=0)
@@ -125,7 +133,11 @@ class ServidorValores(ServidorBase):
         return self
 
 
-    
+class ServidorValoresDataframe(pa.DataFrameModel):
+
+    class Config:
+        dtype = PydanticModel(ServidorValores)
+        coerce = True
 
     
     
