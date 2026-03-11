@@ -9,6 +9,7 @@ class ServidorBase(BaseModel):
     secretaria: str
     nivel: int
     dt_inicio_exercicio: datetime
+    rrps: bool
 
 
     @field_validator('rf')
