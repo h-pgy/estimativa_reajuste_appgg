@@ -1,41 +1,19 @@
 import pandas as pd
-from core.utils.download_servidores import download_dados_servidores
-from core.models.dados_originais_servidores import schema_dados_originais
-from config import ENCODING_CSV_SERVIDORES
-
+from .data_loader import Loader
+from .sintetic_data import RecemNomeadoData
+from ..models.servidores import ServidorBaseDataframe
 from typing import Optional
 
 class Preparator:
 
-    def __init__(self):
+    def __init__(self, qtd_recem_nomeados:int=0)->None:
 
-        self.download_dados_servidores = download_dados_servidores
+        self.load_original_data = Loader()
 
-    def load_df_original(self)->pd.DataFrame:
-
-        fname = self.download_dados_servidores()
-        df = pd.read_csv(fname, 
-                         encoding=ENCODING_CSV_SERVIDORES, 
-                         sep=';')
-        
-        return df
-
-    def validate_df_original(self, df:pd.DataFrame)->pd.DataFrame:
-
-        df = schema_dados_originais.validate(df)
-
-        return df
-
-    def load_df_original_pipeline(self)->pd.DataFrame:
-
-        df = self.load_df_original()
-        df = self.validate_df_original(df)
-
-        return df
+        self.qtd_recem_nomeados = qtd_recem_nomeados
+        self.make_recem_nomeados = RecemNomeadoData()
 
     def renomear_colunas(self, df:pd.DataFrame)->pd.DataFrame:
-
-        df = df.copy(deep=True)
 
         renomear_cols = {
             'REGISTRO' : 'rf',
@@ -45,8 +23,76 @@ class Preparator:
             'DATA_INICIO_EXERC' : 'dt_inicio_exercicio'
         }
         
-        df.rename(renomear_cols, axis=1, inplace=True)
+        df = df.rename(renomear_cols, axis=1)
 
         return df
+    
+
+    def obter_nivel_carreira(self, df:pd.DataFrame)->pd.DataFrame:
+
+        df['nivel_carreira'] = df['cargo_base'].str.extract(r'(\d+)$').astype(int)
+
+        return df
+    
+    def dt_inicio_exercicio_datetime(self, df:pd.DataFrame)->pd.DataFrame:
+
+        df['dt_inicio_exercicio'] = pd.to_datetime(df['dt_inicio_exercicio'], format ="%d/%m/%Y")
+
+        return df
+    
+    def contribui_rpps(self, df:pd.DataFrame)->pd.DataFrame:
+
+        df['contribui_rpps'] = df['dt_inicio_exercicio'].dt.year<2018
+    
+        return df
+
+    
+    def add_sintetic_data(self, df:pd.DataFrame)->pd.DataFrame:
+
+        if self.qtd_recem_nomeados<1:
+            return df
+        
+        sintetic = self.make_recem_nomeados(self.qtd_recem_nomeados)
+
+        return pd.concat([df, sintetic])
+
+    def validate_df(self, df:pd.DataFrame)->pd.DataFrame:
+
+        df = ServidorBaseDataframe.validate(df)
+
+        return df
+
+
+    def base_pipeline(self, df:pd.DataFrame)->pd.DataFrame:
+
+        df = df.copy()
+        df = self.renomear_colunas(df)
+        df = self.obter_nivel_carreira(df)
+        df = self.dt_inicio_exercicio_datetime(df)
+        df = self.contribui_rpps(df)
+
+        df = self.add_sintetic_data(df)
+
+        df = self.validate_df(df)
+
+        return df
+
+    def __call__(self, df:Optional[pd.DataFrame]=None)->pd.DataFrame:
+
+
+        df_original = df or self.load_original_data()
+        new_df = self.base_pipeline(df_original)
+        
+        return new_df
+
+        
+
+
+    
+
+    
+
+
+    
 
 
