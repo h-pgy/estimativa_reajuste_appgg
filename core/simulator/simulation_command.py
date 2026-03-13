@@ -20,7 +20,8 @@ class SimulationCommand:
             
             try:
                 # 2. Executa a função
-                step.function()
+                result = step.function()
+                step.result = result
                 
                 # 3. Sinaliza sucesso (o validator garante a ordem)
                 step.finished = True
