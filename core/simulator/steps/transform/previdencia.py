@@ -34,3 +34,42 @@ class ContribuicaoIprem:
         df['contribuicao_iprem'] = df.apply(self.calcular_contribuicao_iprem, axis=1)
 
         return df
+    
+class ContribuicaoINSS:
+
+    def __init__(self, aliquota_inss:float=ALIQUOTA_INSS, teto_inss:float=TETO_INSS)->None:
+
+        self.aliquota_inss = aliquota_inss
+        self.teto_inss = teto_inss
+
+    def obter_valor_base(self, row:Series[ServidorVencimento])->float:
+
+        # o inss vai sobre todos os vencimentos, incluso terco adicional
+        valor_base = row['vencimento'] + row['terco_ferias'] + row['decimo_terceiro']
+
+        # se der maior que o teto tem que ajustar para o teto
+        if valor_base > self.teto_inss:
+            valor_base = self.teto_inss
+
+        return valor_base
+
+    def calcular_contribuicao_inss(self, row:Series[ServidorVencimento])->float:
+
+        if not row['rpss']:
+            return 0.0
+        
+        valor_base = self.obter_valor_base(row)
+        return round(valor_base * self.aliquota_inss, 2)
+    
+    def __call__(self, df:pd.DataFrame)->pd.DataFrame:
+
+        df = ServidorVencimentoDataframe.validate(df)
+
+        if 'decimo_terceiro' not in df.columns:
+            raise ValueError('Precisa calcular o décimo terceiro antes.')
+        if 'terco_adicional' not in df.columns:
+            raise ValueError('Precisa calcular o terco adicional de férias antes.')
+
+        df['contribuicao_inss'] = df.apply(self.calcular_contribuicao_inss, axis=1)
+
+        return df
