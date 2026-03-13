@@ -1,5 +1,6 @@
 from ..models.simulation_step import SimulationStep
-from typing import List, Callable, Generator
+import pandas as pd
+from typing import List, Callable, Generator, Optional
 
 class SimulationCommand:
 
@@ -7,10 +8,20 @@ class SimulationCommand:
 
         self.steps: List[SimulationStep] = []
 
-    def add_step(self, name:str, message:str, function:Callable)->None:
+    def add_step(self, name:str, message:str, function:Callable, data:Optional[pd.DataFrame]=None,
+                 args:Optional[dict]=None)->None:
 
-        step = SimulationStep(name=name, message=message, function=function)
+        step = SimulationStep(name=name, message=message, function=function, 
+                              data=data, args=args)
         self.steps.append(step)
+
+    def solve_func_args(self, step:SimulationStep)->dict:
+        func_kwargs = {}
+        if step.args is not None:
+            func_kwargs.update(step.args)
+        if step.data is not None:
+            func_kwargs['df'] = step.data
+        return func_kwargs
 
     def execute(self) -> Generator[SimulationStep, None, None]:
         for step in self.steps:
@@ -20,7 +31,8 @@ class SimulationCommand:
             
             try:
                 # 2. Executa a função
-                result = step.function()
+                func_kwargs = self.solve_func_args(step)
+                result = step.function(**func_kwargs)
                 step.result = result
                 
                 # 3. Sinaliza sucesso (o validator garante a ordem)
