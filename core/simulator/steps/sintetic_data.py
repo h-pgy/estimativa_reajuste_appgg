@@ -1,4 +1,4 @@
-from ..models.servidores import ServidorBase, ServidorBaseDataframe
+from core.models.servidores import ServidorBase, ServidorBaseDataframe
 from datetime import datetime
 import pandas as pd
 from typing import Optional, List
