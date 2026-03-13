@@ -3,12 +3,14 @@ from .data_loader import Loader
 from core.models.servidores import ServidorBaseDataframe
 from core.models.dados_originais_servidores import schema_dados_originais
 from typing import Optional
+from config import CARGO_BASE
 
 class Preparator:
 
-    def __init__(self)->None:
+    def __init__(self, cargo_base:str=CARGO_BASE)->None:
 
         self.load_original_data = Loader()
+        self.cargo_base = cargo_base
 
     def renomear_colunas(self, df:pd.DataFrame)->pd.DataFrame:
 
@@ -21,6 +23,13 @@ class Preparator:
         }
         
         df = df.rename(renomear_cols, axis=1)
+
+        return df
+
+    def filtrar_para_membros_carreira(self, df:pd.DataFrame, cargo_base:str=CARGO_BASE)->pd.DataFrame:
+
+        df = df[df['cargo_base'].str.startswith(cargo_base)]
+        df = df.reset_index(drop=True)
 
         return df
     
@@ -57,6 +66,7 @@ class Preparator:
         #valida se os dados estão ok
         df = schema_dados_originais.validate(df)
         df = self.renomear_colunas(df)
+        df = self.filtrar_para_membros_carreira(df, self.cargo_base)
         df = self.obter_nivel_carreira(df)
         df = self.dt_inicio_exercicio_datetime(df)
         df = self.contribui_rpps(df)
