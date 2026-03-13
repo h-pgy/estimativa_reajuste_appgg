@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator, model_validator, ConfigDict
-from typing import Callable, Self
+from typing import Callable, Self, Optional
+import pandas as pd
 
 class SimulationStep(BaseModel):
 
@@ -8,6 +9,7 @@ class SimulationStep(BaseModel):
     name: str
     message: str
     function: Callable
+    result: Optional[pd.DataFrame]=None
     initialized: bool = False
     finished: bool = False
     sucess: bool = False
@@ -26,6 +28,8 @@ class SimulationStep(BaseModel):
             raise ValueError('A step cannot be finished if it has not been initialized')
         if self.sucess and not self.finished:
             raise ValueError('A step cannot be successful if it has not been finished')
+        if self.sucess and self.result is None:
+            raise ValueError('A step cannot be successful if it does not have a result')
         
         if self.sucess and self.error:
             raise ValueError('A step cannot be both successful and have an error')
