@@ -1,17 +1,13 @@
 import pandas as pd
 from .data_loader import Loader
-from .sintetic_data import RecemNomeadoData
-from ..models.servidores import ServidorBaseDataframe
+from core.models.servidores import ServidorBaseDataframe
 from typing import Optional
 
 class Preparator:
 
-    def __init__(self, qtd_recem_nomeados:int=0)->None:
+    def __init__(self)->None:
 
         self.load_original_data = Loader()
-
-        self.qtd_recem_nomeados = qtd_recem_nomeados
-        self.make_recem_nomeados = RecemNomeadoData()
 
     def renomear_colunas(self, df:pd.DataFrame)->pd.DataFrame:
 
@@ -46,15 +42,6 @@ class Preparator:
     
         return df
 
-    
-    def add_sintetic_data(self, df:pd.DataFrame)->pd.DataFrame:
-
-        if self.qtd_recem_nomeados<1:
-            return df
-        
-        sintetic = self.make_recem_nomeados(self.qtd_recem_nomeados)
-
-        return pd.concat([df, sintetic])
 
     def validate_df(self, df:pd.DataFrame)->pd.DataFrame:
 
@@ -70,9 +57,6 @@ class Preparator:
         df = self.obter_nivel_carreira(df)
         df = self.dt_inicio_exercicio_datetime(df)
         df = self.contribui_rpps(df)
-
-        df = self.add_sintetic_data(df)
-
         df = self.validate_df(df)
 
         return df
