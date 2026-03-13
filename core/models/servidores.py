@@ -3,6 +3,7 @@ import pandera.pandas as pa
 from pandera.engines.pandas_engine import PydanticModel
 from datetime import datetime
 from typing import Self
+from config import SALARIO_MINIMO
 
 class ServidorBase(BaseModel):
 
@@ -99,10 +100,19 @@ class ServidorBaseDataframe(pa.DataFrameModel):
     class Config:
         dtype = PydanticModel(ServidorBase)
         coerce = True
-    
-class ServidorValores(ServidorBase):
 
-    vencimento: float = Field(gt=0)
+class ServidorVencimento(ServidorBase):
+
+    vencimento: float = Field(ge=SALARIO_MINIMO)
+
+class ServidorVencimentoDataframe(pa.DataFrameModel):
+
+    class Config:
+        dtype = PydanticModel(ServidorVencimento)
+        coerce = True
+    
+class ServidorEncargos(ServidorVencimento):
+
     decimo_terceiro: float = Field(gt=0)
     terco_ferias: float = Field(gt=0)
     vale_alimentacao: float = Field(ge=0)
@@ -133,10 +143,10 @@ class ServidorValores(ServidorBase):
         return self
 
 
-class ServidorValoresDataframe(pa.DataFrameModel):
+class ServidorEncargosDataframe(pa.DataFrameModel):
 
     class Config:
-        dtype = PydanticModel(ServidorValores)
+        dtype = PydanticModel(ServidorEncargos)
         coerce = True
 
     
