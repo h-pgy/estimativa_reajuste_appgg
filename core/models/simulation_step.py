@@ -9,6 +9,8 @@ class SimulationStep(BaseModel):
     name: str
     message: str
     function: Callable
+    data: Optional[pd.DataFrame]=None
+    args: Optional[dict]=None
     result: Optional[pd.DataFrame]=None
     initialized: bool = False
     finished: bool = False
