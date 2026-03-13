@@ -1,6 +1,7 @@
 import pandas as pd
 from .data_loader import Loader
 from core.models.servidores import ServidorBaseDataframe
+from core.models.dados_originais_servidores import schema_dados_originais
 from typing import Optional
 
 class Preparator:
@@ -53,6 +54,8 @@ class Preparator:
     def base_pipeline(self, df:pd.DataFrame)->pd.DataFrame:
 
         df = df.copy()
+        #valida se os dados estão ok
+        df = schema_dados_originais.validate(df)
         df = self.renomear_colunas(df)
         df = self.obter_nivel_carreira(df)
         df = self.dt_inicio_exercicio_datetime(df)

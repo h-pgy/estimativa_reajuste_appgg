@@ -1,13 +1,14 @@
 from core.models.servidores import ServidorBase, ServidorBaseDataframe
 from datetime import datetime
 import pandas as pd
-from typing import Optional, List
+from typing import List
+from config import CARGO_BASE, DT_NOMEACAO
 
 class RecemNomeadoData:
 
-    def __init__(self, dt_nomeacao:Optional[datetime]=None, cargo_base:str='APPGG1')->None:
+    def __init__(self, dt_nomeacao:datetime=DT_NOMEACAO, cargo_base:str=CARGO_BASE)->None:
 
-        self.dt_nomeacao = dt_nomeacao or datetime.today()
+        self.dt_nomeacao = dt_nomeacao 
 
         if not cargo_base[-1].isdigit():
             cargo_base += '1'
