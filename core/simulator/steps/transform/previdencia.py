@@ -1,6 +1,6 @@
 from core.models.servidores import ServidorVencimento, ServidorVencimentoDataframe
 import pandas as pd
-from config import CONTRIBUICAO_IPREM, ALIQUOTA_INSS, TETO_INSS
+from config import CONTRIBUICAO_IPREM, ALIQUOTA_INSS, TETO_INSS, ALIQUOTA_COMPLEMENTAR
 from pandera.typing import Series
 
 class ContribuicaoIprem:
@@ -71,5 +71,39 @@ class ContribuicaoINSS:
             raise ValueError('Precisa calcular o terco adicional de férias antes.')
 
         df['contribuicao_inss'] = df.apply(self.calcular_contribuicao_inss, axis=1)
+
+        return df
+    
+
+class PrevidenciaComplementar:
+
+    def __init__(self, aliquota_complementar:float=CONTRIBUICAO_IPREM, teto_inss:float=TETO_INSS)->None:
+
+        self.aliquota_complementar = aliquota_complementar
+        self.teto_inss = teto_inss
+
+    def obter_valor_base(self, row:Series[ServidorVencimento])->float:
+
+        # a aliquota complementar é só sobre vencimento e decimo terceiro
+        valor_base = row['vencimento'] + row['decimo_terceiro']
+
+        return valor_base
+
+    def calcular_previdencia_complementar(self, row:Series[ServidorVencimento])->float:
+
+        if not row['rpss']:
+            return 0.0
+        
+        valor_base = self.obter_valor_base(row)
+        return round(valor_base * self.aliquota_complementar, 2)
+    
+    def __call__(self, df:pd.DataFrame)->pd.DataFrame:
+
+        df = ServidorVencimentoDataframe.validate(df)
+
+        if 'decimo_terceiro' not in df.columns:
+            raise ValueError('Precisa calcular o décimo terceiro antes.')
+
+        df['previdencia_complementar'] = df.apply(self.calcular_previdencia_complementar, axis=1)
 
         return df
