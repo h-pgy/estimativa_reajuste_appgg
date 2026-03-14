@@ -1,17 +1,63 @@
-from core.models.servidores import ServidorBaseDataframe
-from core.models.tabelas import Tabela
+from core.utils.datetime import meses_passados, adicionar_meses
+from core.models.servidores import ServidorBaseDataframe, ServidorBase, ServidorVencimentoDataframe
+from core.models.tabelas import TabelaDataframe
+from pandera.typing import Series
+from datetime import datetime
 import pandas as pd
 
 class Vencimento:
 
-    def __call__(self, df:pd.DataFrame, tabela:Tabela)->pd.DataFrame:
+    def __init__(self, tabela_vencimento:pd.DataFrame)->None:
 
+        self.tabela_vencimento = TabelaDataframe.validate(tabela_vencimento)
 
-        tabela_dict = tabela.model_dump()
+    def tempo_exercicio_meses_total(self, dt_inicio_exercicio_corrigida:datetime, mes_serie:int)->int:
+
+        hoje = datetime.today()
+        data_projetada = adicionar_meses(dt_inicio_exercicio_corrigida, mes_serie)
+
+        return meses_passados(hoje, data_projetada)
+    
+    def meses_cumulativo(self, tabela_vencimento:pd.DataFrame)->pd.DataFrame:
+
+        tabela_vencimento['qtd_meses_acumulado'] = tabela_vencimento['qtd_meses_no_nivel'].cumsum()
+
+        return tabela_vencimento
+    
+
+    def nivel_projetado(self, row:Series[ServidorBase], mes_serie:int)->int:
+
+        tempo_exercicio_meses = self.tempo_exercicio_meses_total(row['dt_inicio_exercicio_corrigida'], mes_serie)
+        tabela_vencimento = self.meses_cumulativo(self.tabela_vencimento)
+
+        #filtra a tabela para apenas os niveis que a pessoa alcançou, ou seja aqueles cujo qtd_meses_acumulado é
+        # menor ou igual ao tempo de exercício em meses
+        tabela_vencimento_niveis_alcancados = tabela_vencimento[
+            tabela_vencimento['qtd_meses_acumulado'] <= tempo_exercicio_meses].reset_index(drop=True)
+
+        # pega o nivel máximo alcançado, que é o nível projetado para aquela pessoa naquele mês da série
+        nivel = tabela_vencimento_niveis_alcancados['nivel'].max()
+
+        return nivel
+    
+    def obter_vencimento(self, row:Series[ServidorBase], mes_serie:int)->float:
+
+        nivel = self.nivel_projetado(row, mes_serie)
+
+        # pega a remuneração correspondente ao nível projetado
+        vencimento = self.tabela_vencimento[self.tabela_vencimento['nivel'] == nivel]['remuneracao'].values[0]
+
+        return vencimento
+    
+    def __call__(self, df:pd.DataFrame, mes_serie:int)->pd.DataFrame:
+
         df = ServidorBaseDataframe.validate(df)
 
-        df['vencimento'] = df['nivel'].map(tabela_dict)
+        df['vencimento'] = df.apply(lambda row: self.obter_vencimento(row, mes_serie), axis=1)
+        df = ServidorVencimentoDataframe.validate(df)
 
         return df
+
+        
 
         
