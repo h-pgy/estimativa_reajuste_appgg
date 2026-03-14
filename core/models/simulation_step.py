@@ -4,7 +4,7 @@ import pandas as pd
 
 class SimulationStep(BaseModel):
 
-    model_config = model_config = ConfigDict(validate_assignment=True)
+    model_config = model_config = ConfigDict(validate_assignment=True, arbitrary_types_allowed=True)
 
     name: str
     message: str
@@ -15,6 +15,7 @@ class SimulationStep(BaseModel):
     finished: bool = False
     sucess: bool = False
     error: bool=False
+    error_message: Optional[str]=None
 
     @field_validator('name', 'message')
     @classmethod
@@ -34,5 +35,8 @@ class SimulationStep(BaseModel):
         
         if self.sucess and self.error:
             raise ValueError('A step cannot be both successful and have an error')
+        
+        if self.error and not self.error_message:
+            raise ValueError('A step cannot have an error without an error message')
         
         return self
