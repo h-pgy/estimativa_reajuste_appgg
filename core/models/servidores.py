@@ -13,6 +13,7 @@ class ServidorBase(BaseModel):
     secretaria: str
     nivel: int
     dt_inicio_exercicio: datetime
+    dt_inicio_exercicio_corrigida: datetime
     rpps: bool
 
 
@@ -94,6 +95,14 @@ class ServidorBase(BaseModel):
             raise ValueError('Nivel deve ser inteiro positivo')
         
         return v
+    
+    @model_validator(mode='after')
+    def validar_dt_inicio_exercicio_corrigida(self)-> Self:
+
+        if self.dt_inicio_exercicio_corrigida < self.dt_inicio_exercicio:
+            raise ValueError('Data de início de exercício corrigida deve ser igual ou posterior à data de início de exercício original')
+        
+        return self
     
 class ServidorBaseDataframe(pa.DataFrameModel):
 

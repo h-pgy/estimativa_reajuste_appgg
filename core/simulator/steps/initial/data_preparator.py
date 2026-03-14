@@ -1,16 +1,23 @@
 import pandas as pd
 from .data_loader import Loader
+from .correct_inicio_exercicio import CorrectDtInicioExercicio
 from core.models.servidores import ServidorBaseDataframe
+from core.models.tabelas import TabelaDataframe
+from pandera.typing import DataFrame
 from core.models.dados_originais_servidores import schema_dados_originais
 from typing import Optional
 from config import CARGO_BASE
 
 class Preparator:
 
-    def __init__(self, cargo_base:str=CARGO_BASE)->None:
+    def __init__(self, tabela_original:DataFrame[TabelaDataframe], cargo_base:str=CARGO_BASE, )->None:
+
+        self.tabela_original = TabelaDataframe.validate(tabela_original)
+        self.cargo_base = cargo_base
 
         self.load_original_data = Loader()
-        self.cargo_base = cargo_base
+        self.corrigir_inicio_exercicio = CorrectDtInicioExercicio(self.tabela_original)
+
 
     def renomear_colunas(self, df:pd.DataFrame)->pd.DataFrame:
 
@@ -51,14 +58,12 @@ class Preparator:
         df['contribui_rpps'] = df['dt_inicio_exercicio'].dt.year<2018
     
         return df
-
-
+    
     def validate_df(self, df:pd.DataFrame)->pd.DataFrame:
 
         df = ServidorBaseDataframe.validate(df)
 
         return df
-
 
     def base_pipeline(self, df:pd.DataFrame)->pd.DataFrame:
 
@@ -70,6 +75,7 @@ class Preparator:
         df = self.obter_nivel_carreira(df)
         df = self.dt_inicio_exercicio_datetime(df)
         df = self.contribui_rpps(df)
+        df = self.corrigir_inicio_exercicio(df)
         df = self.validate_df(df)
 
         return df
