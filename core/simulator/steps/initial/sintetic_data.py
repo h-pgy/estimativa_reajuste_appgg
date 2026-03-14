@@ -76,10 +76,10 @@ class RecemNomeadoData:
 
         return df
     
-    def __call__(self, original_df:pd.DataFrame, qtd_servidores:int)->pd.DataFrame:
+    def __call__(self, df:pd.DataFrame, qtd_servidores:int)->pd.DataFrame:
 
 
-        original_df = ServidorBaseDataframe.validate(original_df)
+        original_df = ServidorBaseDataframe.validate(df)
         servidores_sinteticos = self.pipeline(qtd_servidores)
         df_final = pd.concat([original_df, servidores_sinteticos])
 

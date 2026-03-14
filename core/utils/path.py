@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 def create_if_not_exists(folder:str)->str:
 
@@ -7,9 +8,10 @@ def create_if_not_exists(folder:str)->str:
     
     return os.path.abspath(folder)
 
-def solve_fpath(file:str, parent_dir:str)->str:
+def solve_fpath(file:str, parent_dir:Optional[str]=None)->str:
 
-    parent_dir = create_if_not_exists(parent_dir)
-    fpath = os.path.join(file, parent_dir)
+    if parent_dir:
+        parent_dir = create_if_not_exists(parent_dir)
+        file = os.path.join(file, parent_dir)
 
-    return os.path.abspath(fpath)
+    return os.path.abspath(file)

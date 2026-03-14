@@ -7,20 +7,18 @@ class SimulationCommand:
     def __init__(self)->None:
 
         self.steps: List[SimulationStep] = []
+        self.dataframe:Optional[pd.DataFrame] = None
 
-    def add_step(self, name:str, message:str, function:Callable, data:Optional[pd.DataFrame]=None,
-                 args:Optional[dict]=None)->None:
+    def add_step(self, name:str, message:str, function:Callable, args:Optional[dict]=None)->None:
 
         step = SimulationStep(name=name, message=message, function=function, 
-                              data=data, args=args)
+                              args=args)
         self.steps.append(step)
 
     def solve_func_args(self, step:SimulationStep)->dict:
         func_kwargs = {}
         if step.args is not None:
             func_kwargs.update(step.args)
-        if step.data is not None:
-            func_kwargs['df'] = step.data
         return func_kwargs
 
     def execute(self) -> Generator[SimulationStep, None, None]:
@@ -32,8 +30,8 @@ class SimulationCommand:
             try:
                 # 2. Executa a função
                 func_kwargs = self.solve_func_args(step)
-                result = step.function(**func_kwargs)
-                step.result = result
+                self.dataframe = step.function(df=self.dataframe, **func_kwargs)
+                step.result = self.dataframe
                 
                 # 3. Sinaliza sucesso (o validator garante a ordem)
                 step.finished = True

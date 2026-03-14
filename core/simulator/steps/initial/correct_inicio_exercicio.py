@@ -5,9 +5,9 @@ from datetime import datetime
 
 class CorrectDtInicioExercicio:
 
-    def __init__(self, tabela_original:pd.DataFrame)->None:
+    def __init__(self, df_tabela_original:pd.DataFrame)->None:
 
-        self.tabela_original = TabelaDataframe.validate(tabela_original)
+        self.tabela_original = TabelaDataframe.validate(df_tabela_original)
 
     def meses_passados_inicio_exercicio(self, dt_inicio_exercicio:datetime)->int:
 

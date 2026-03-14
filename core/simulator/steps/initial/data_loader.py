@@ -1,6 +1,7 @@
 import pandas as pd
 from core.utils.download_servidores import download_dados_servidores
 from core.models.dados_originais_servidores import schema_dados_originais
+from typing import Optional
 from config import ENCODING_CSV_SERVIDORES
 
 class Loader:
@@ -24,9 +25,9 @@ class Loader:
 
         return df
     
-    def __call__(self)->pd.DataFrame:
+    def __call__(self, df:Optional[pd.DataFrame]=None)->pd.DataFrame:
 
-        df = self.load_df_original()
-        df = self.validate_df_original(df)
+        self.df = df or self.load_df_original()
+        df = self.validate_df_original(self.df)
 
         return df
