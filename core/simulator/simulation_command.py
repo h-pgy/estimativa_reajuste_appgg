@@ -37,9 +37,10 @@ class SimulationCommand:
                 step.finished = True
                 step.sucess = True
                 yield step
-            except Exception:
+            except Exception as e:
                 # 3b. Sinaliza erro
                 step.finished = True
+                step.error_message = "Error: {}. Message: {}".format(type(e).__name__, str(e))
                 step.error = True
                 yield step
                 break

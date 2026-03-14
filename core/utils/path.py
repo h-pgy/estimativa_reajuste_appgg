@@ -10,8 +10,8 @@ def create_if_not_exists(folder:str)->str:
 
 def solve_fpath(file:str, parent_dir:Optional[str]=None)->str:
 
-    if parent_dir:
+    if parent_dir is not None:
         parent_dir = create_if_not_exists(parent_dir)
-        file = os.path.join(file, parent_dir)
+        file = os.path.join(parent_dir, file)
 
     return os.path.abspath(file)

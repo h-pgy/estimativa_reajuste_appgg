@@ -1,5 +1,5 @@
 from .simulation_command import SimulationCommand
-from steps.initial import load_original_data, make_sintetic_recem_nomeados_data, prepare_original_data
+from .steps.initial import load_original_data, make_sintetic_recem_nomeados_data, prepare_original_data
 from core.utils.json import load_json
 from config import CARGO_BASE, TABELA_ORIGINAL, QTD_RECEM_NOMEADOS
 
