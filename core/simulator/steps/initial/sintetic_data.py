@@ -33,6 +33,7 @@ class RecemNomeadoData:
             secretaria='NA',
             nivel=1,
             dt_inicio_exercicio=self.dt_nomeacao,
+            dt_inicio_exercicio_corrigida=self.dt_nomeacao,
             rpps=self.rpps
         )
 
