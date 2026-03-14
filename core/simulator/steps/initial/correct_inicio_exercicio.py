@@ -8,6 +8,7 @@ class CorrectDtInicioExercicio:
     def __init__(self, df_tabela_original:pd.DataFrame)->None:
 
         self.tabela_original = TabelaDataframe.validate(df_tabela_original)
+        self.tabela_original = self.qtd_meses_acumulado_nivel(self.tabela_original)
 
     def meses_passados_inicio_exercicio(self, dt_inicio_exercicio:datetime)->int:
 
@@ -15,7 +16,14 @@ class CorrectDtInicioExercicio:
 
         return meses_passados(hoje, dt_inicio_exercicio)
     
-    def qtd_meses_acumulado_nivel(self, nivel:int)->int:
+
+    def qtd_meses_acumulado_nivel(self, df_tabela_original:pd.DataFrame)->pd.DataFrame:
+
+        df_tabela_original['qtd_meses_acumulado'] = df_tabela_original['qtd_meses_no_nivel'].cumsum()
+
+        return df_tabela_original
+    
+    def total_meses_ate_nivel(self, nivel:int)->int:
 
         niveis_anteriores = self.tabela_original[self.tabela_original['nivel']<nivel].reset_index(drop=True)
         total_meses_ate_nivel = niveis_anteriores['qtd_meses_acumulado'].max()
@@ -25,7 +33,7 @@ class CorrectDtInicioExercicio:
     def meses_a_ajustar(self, dt_inicio_exercicio:datetime, nivel:int)->int:
 
         meses_passados = self.meses_passados_inicio_exercicio(dt_inicio_exercicio)
-        meses_acumulados_prox_nivel = self.qtd_meses_acumulado_nivel(nivel+1)
+        meses_acumulados_prox_nivel = self.total_meses_ate_nivel(nivel+1)
 
         #nesse caso ele deveria ter passado para o próximo nível mas não passou
         #a unica forma disso ter ocorrido é se ele teve meses que nao foram efetivo exercicio

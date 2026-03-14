@@ -23,11 +23,13 @@ class Preparator:
             'REGISTRO' : 'rf',
             'NOME' : 'nome',
             'REF_CARGO_BAS' : 'cargo_base',
-            'SIGLA' : 'secretaria_dez_2025',
+            'SIGLA' : 'secretaria',
             'DATA_INICIO_EXERC' : 'dt_inicio_exercicio'
         }
         
         df = df.rename(renomear_cols, axis=1)
+
+        df = df[list(renomear_cols.values())]
 
         return df
 
@@ -38,10 +40,16 @@ class Preparator:
 
         return df
     
+    def rf_to_str(self, df:pd.DataFrame)->pd.DataFrame:
+
+        df['rf'] = df['rf'].astype(str).str.zfill(7)
+
+        return df
+    
 
     def obter_nivel_carreira(self, df:pd.DataFrame)->pd.DataFrame:
 
-        df['nivel_carreira'] = df['cargo_base'].str.extract(r'(\d+)$').astype(int)
+        df['nivel'] = df['cargo_base'].str.extract(r'(\d+)$').astype(int)
 
         return df
     
@@ -53,7 +61,7 @@ class Preparator:
     
     def contribui_rpps(self, df:pd.DataFrame)->pd.DataFrame:
 
-        df['contribui_rpps'] = df['dt_inicio_exercicio'].dt.year<2018
+        df['rpss'] = df['dt_inicio_exercicio'].dt.year<2018
     
         return df
     
@@ -69,6 +77,7 @@ class Preparator:
         #valida se os dados estão ok
         df = schema_dados_originais.validate(df)
         df = self.renomear_colunas(df)
+        df = self.rf_to_str(df)
         df = self.filtrar_para_membros_carreira(df, self.cargo_base)
         df = self.obter_nivel_carreira(df)
         df = self.dt_inicio_exercicio_datetime(df)
@@ -84,7 +93,9 @@ class Preparator:
         df_tabela_original = TabelaDataframe.validate(df_tabela_original)
         self.corrigir_inicio_exercicio = CorrectDtInicioExercicio(df_tabela_original)
 
-        df_original = df or self.load_original_data()
+        if df is None:
+            df = self.load_original_data()
+        df_original = df
         new_df = self.base_pipeline(df_original)
         
         return new_df
