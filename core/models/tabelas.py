@@ -1,11 +1,12 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field
 import pandera.pandas as pa
 from pandera.engines.pandas_engine import PydanticModel
 
-class Tabela(BaseModel):
+class NivelTabela(BaseModel):
 
     nivel: int
     remuneracao: float
+    qtd_meses_no_nivel: int = Field(gt=0)
 
     @field_validator('nivel')
     @classmethod
@@ -36,5 +37,5 @@ class Tabela(BaseModel):
 class TabelaDataframe(pa.DataFrameModel):
 
     class Config:
-        dtype = PydanticModel(Tabela)
+        dtype = PydanticModel(NivelTabela)
         coerce = True
