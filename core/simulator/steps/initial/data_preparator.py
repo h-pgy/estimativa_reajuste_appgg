@@ -10,13 +10,11 @@ from config import CARGO_BASE
 
 class Preparator:
 
-    def __init__(self, tabela_original:DataFrame[TabelaDataframe], cargo_base:str=CARGO_BASE, )->None:
+    def __init__(self, cargo_base:str=CARGO_BASE)->None:
 
-        self.tabela_original = TabelaDataframe.validate(tabela_original)
         self.cargo_base = cargo_base
-
         self.load_original_data = Loader()
-        self.corrigir_inicio_exercicio = CorrectDtInicioExercicio(self.tabela_original)
+
 
 
     def renomear_colunas(self, df:pd.DataFrame)->pd.DataFrame:
@@ -80,8 +78,11 @@ class Preparator:
 
         return df
 
-    def __call__(self, df:Optional[pd.DataFrame]=None)->pd.DataFrame:
+    def __call__(self, df_tabela_original:pd.DataFrame, df:Optional[pd.DataFrame]=None)->pd.DataFrame:
 
+        #ficou estranho mas é o jeito para funcionar com o padrão comand
+        df_tabela_original = TabelaDataframe.validate(df_tabela_original)
+        self.corrigir_inicio_exercicio = CorrectDtInicioExercicio(df_tabela_original)
 
         df_original = df or self.load_original_data()
         new_df = self.base_pipeline(df_original)
