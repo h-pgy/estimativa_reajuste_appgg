@@ -82,6 +82,7 @@ class RecemNomeadoData:
         original_df = ServidorBaseDataframe.validate(df)
         servidores_sinteticos = self.pipeline(qtd_servidores)
         df_final = pd.concat([original_df, servidores_sinteticos])
+        df_final = df_final.reset_index(drop=True)
 
         return df_final
 
