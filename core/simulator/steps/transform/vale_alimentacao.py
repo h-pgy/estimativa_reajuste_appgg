@@ -1,4 +1,4 @@
-from core.models.servidores import ServidorVencimento, ServidorVencimentoDataframe
+from core.models.servidores import ServidorVencimento
 import pandas as pd
 from pandera.typing import Series
 from config import VALOR_VALE_ALIMENTACAO, SALARIO_MINIMO
@@ -21,8 +21,6 @@ class ValeAlimentacao:
         return 0.0
     
     def __call__(self, df:pd.DataFrame)->pd.DataFrame:
-
-        df = ServidorVencimentoDataframe.validate(df)
 
         df['vale_alimentacao'] = df.apply(self.calcular_va, axis=1)
         

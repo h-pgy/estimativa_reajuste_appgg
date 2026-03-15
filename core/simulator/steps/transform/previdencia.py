@@ -1,4 +1,4 @@
-from core.models.servidores import ServidorVencimento, ServidorVencimentoDataframe
+from core.models.servidores import ServidorVencimento
 import pandas as pd
 from config import CONTRIBUICAO_IPREM, ALIQUOTA_INSS, TETO_INSS, ALIQUOTA_COMPLEMENTAR
 from pandera.typing import Series
@@ -18,15 +18,13 @@ class ContribuicaoIprem:
 
     def calcular_contribuicao_iprem(self, row:Series[ServidorVencimento])->float:
 
-        if not row['rpss']:
+        if not row['rpps']:
             return 0.0
         
         valor_base = self.obter_valor_base(row)
         return round(valor_base * self.contribuicao_iprem, 2)
     
     def __call__(self, df:pd.DataFrame)->pd.DataFrame:
-
-        df = ServidorVencimentoDataframe.validate(df)
 
         if 'decimo_terceiro' not in df.columns:
             raise ValueError('Precisa calcular o décimo terceiro antes.')
@@ -55,7 +53,7 @@ class ContribuicaoINSS:
 
     def calcular_contribuicao_inss(self, row:Series[ServidorVencimento])->float:
 
-        if not row['rpss']:
+        if row['rpps']:
             return 0.0
         
         valor_base = self.obter_valor_base(row)
@@ -63,11 +61,9 @@ class ContribuicaoINSS:
     
     def __call__(self, df:pd.DataFrame)->pd.DataFrame:
 
-        df = ServidorVencimentoDataframe.validate(df)
-
         if 'decimo_terceiro' not in df.columns:
             raise ValueError('Precisa calcular o décimo terceiro antes.')
-        if 'terco_adicional' not in df.columns:
+        if 'terco_ferias' not in df.columns:
             raise ValueError('Precisa calcular o terco adicional de férias antes.')
 
         df['contribuicao_inss'] = df.apply(self.calcular_contribuicao_inss, axis=1)
@@ -91,15 +87,13 @@ class PrevidenciaComplementar:
 
     def calcular_previdencia_complementar(self, row:Series[ServidorVencimento])->float:
 
-        if not row['rpss']:
+        if row['rpps']:
             return 0.0
         
         valor_base = self.obter_valor_base(row)
         return round(valor_base * self.aliquota_complementar, 2)
     
     def __call__(self, df:pd.DataFrame)->pd.DataFrame:
-
-        df = ServidorVencimentoDataframe.validate(df)
 
         if 'decimo_terceiro' not in df.columns:
             raise ValueError('Precisa calcular o décimo terceiro antes.')

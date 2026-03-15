@@ -1,4 +1,4 @@
-from core.models.servidores import ServidorVencimentoDataframe
+from core.models.servidores import ServidorEncargosDataframe
 import pandas as pd
 
 class TotalMensal:
@@ -16,12 +16,12 @@ class TotalMensal:
     
     def __call__(self, df:pd.DataFrame)->pd.DataFrame:
 
-        df = ServidorVencimentoDataframe.validate(df)
-
         for col in self.colunas_total:
             if col not in df.columns:
                 raise ValueError(f'Precisa calcular {col} antes.')
 
         df['valor_total'] = df[self.colunas_total].sum(axis=1)
+
+        df = ServidorEncargosDataframe.validate(df)
         
         return df
