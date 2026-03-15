@@ -1,19 +1,22 @@
-from pydantic import BaseModel, field_validator, Field, model_validator
+from pydantic import BaseModel, field_validator, Field, model_validator, ConfigDict
 import pandera.pandas as pa
 from pandera.engines.pandas_engine import PydanticModel
 from datetime import datetime
-from typing import Self
+from typing import Self, Union
+import pandas as pd
 from config import SALARIO_MINIMO
 
 class ServidorBase(BaseModel):
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     rf: str
     nome: str
     cargo_base: str
     secretaria: str
     nivel: int
-    dt_inicio_exercicio: datetime
-    dt_inicio_exercicio_corrigida: datetime
+    dt_inicio_exercicio: Union[datetime, pd.Timestamp]
+    dt_inicio_exercicio_corrigida: Union[datetime, pd.Timestamp]
     rpps: bool
 
 
@@ -62,8 +65,8 @@ class ServidorBase(BaseModel):
 
         if not isinstance(v, str):
             raise ValueError('Sigla da secretaria deve ser string')
-        if len(v)<3:
-            raise ValueError('Sigla da secretaria deve ter pelo menos três caracteres')
+        if len(v)<2:
+            raise ValueError('Sigla da secretaria deve ter pelo menos dois caracteres')
         
         return v
 

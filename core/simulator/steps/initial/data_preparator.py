@@ -61,7 +61,7 @@ class Preparator:
     
     def contribui_rpps(self, df:pd.DataFrame)->pd.DataFrame:
 
-        df['rpss'] = df['dt_inicio_exercicio'].dt.year<2018
+        df['rpps'] = df['dt_inicio_exercicio'].dt.year<2018
     
         return df
     
