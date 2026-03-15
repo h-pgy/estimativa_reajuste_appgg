@@ -1,7 +1,7 @@
 from core.models.servidores import ServidorVencimentoDataframe
 import pandas as pd
 
-class ValeAlimentacao:
+class TotalMensal:
 
     colunas_total = [
         'vencimento',
