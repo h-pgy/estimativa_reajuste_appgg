@@ -115,7 +115,16 @@ class ServidorBaseDataframe(pa.DataFrameModel):
 
 class ServidorVencimento(ServidorBase):
 
+    nivel_projetado: int = Field(ge=1)
     vencimento: float = Field(ge=SALARIO_MINIMO)
+
+    @model_validator(mode='after')
+    def validar_nivel_projetado(self)->Self:
+
+        if self.nivel_projetado < self.nivel:
+            raise ValueError('Nivel projetado deve ser igual ou superior ao nível atual do servidor')
+        return self
+
 
 class ServidorVencimentoDataframe(pa.DataFrameModel):
 

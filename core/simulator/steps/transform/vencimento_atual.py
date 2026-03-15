@@ -40,20 +40,25 @@ class Vencimento:
 
         return nivel
     
-    def obter_vencimento(self, row:Series[ServidorBase], mes_serie:int)->float:
+    def obter_vencimento(self, row:Series[ServidorBase])->float:
 
-        nivel = self.nivel_projetado(row, mes_serie)
-
+        nivel = row['nivel_projetado']
         # pega a remuneração correspondente ao nível projetado
-        vencimento = self.tabela_vencimento[self.tabela_vencimento['nivel'] == nivel]['remuneracao'].values[0]
+        vencimento: float = self.tabela_vencimento[self.tabela_vencimento['nivel'] == nivel]['remuneracao'].values[0]
 
         return vencimento
+
+    def pipeline(self, df:pd.DataFrame, mes_serie:int)->pd.DataFrame:
+
+        df = ServidorBaseDataframe.validate(df)
+        df['nivel_projetado'] = df.apply(lambda row: self.nivel_projetado(row, mes_serie), axis=1)
+        df['vencimento'] = df.apply(self.obter_vencimento, axis=1)
+
+        return df
     
     def __call__(self, df:pd.DataFrame, mes_serie:int)->pd.DataFrame:
 
-        df = ServidorBaseDataframe.validate(df)
-
-        df['vencimento'] = df.apply(lambda row: self.obter_vencimento(row, mes_serie), axis=1)
+        df = self.pipeline(df, mes_serie)
         df = ServidorVencimentoDataframe.validate(df)
 
         return df
