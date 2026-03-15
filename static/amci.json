@@ -1,77 +1,77 @@
 [
     {
         "nivel" : 1,
-        "remuneracao" : 13208.14,
+        "remuneracao" : 16840.38,
         "qtd_meses_no_nivel" : 36
     },
     {
         "nivel" : 2,
-        "remuneracao" : 14528.96,
+        "remuneracao" : 17682.41,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 3,
-        "remuneracao" : 14892.18,
+        "remuneracao" : 18036.04,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 4,
-        "remuneracao" : 15264.48,
+        "remuneracao" : 18396.78,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 5,
-        "remuneracao" : 15646.09,
+        "remuneracao" : 18764.71,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 6,
-        "remuneracao" : 16037.24,
+        "remuneracao" : 19139.99,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 7,
-        "remuneracao" : 17961.73,
+        "remuneracao" : 20097.00,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 8,
-        "remuneracao" : 18410.77,
+        "remuneracao" : 20498.94,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 9,
-        "remuneracao" : 18871.04,
+        "remuneracao" : 20908.92,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 10,
-        "remuneracao" : 19342.80,
+        "remuneracao" : 21327.10,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 11,
-        "remuneracao" : 19826.39,
+        "remuneracao" : 21753.64,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 12,
-        "remuneracao" : 21869.74,
+        "remuneracao" : 22841.33,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 13,
-        "remuneracao" : 22416.47,
+        "remuneracao" : 23183.95,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 14,
-        "remuneracao" : 22976.89,
+        "remuneracao" : 23531.72,
         "qtd_meses_no_nivel" : 18
     },
     {
         "nivel" : 15,
-        "remuneracao" : 23551.31,
+        "remuneracao" : 23884.67,
         "qtd_meses_no_nivel" : 18
     }
 ]
