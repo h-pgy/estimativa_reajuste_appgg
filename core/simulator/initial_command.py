@@ -1,15 +1,28 @@
 from .simulation_command import SimulationCommand
 from .steps.initial import load_original_data, make_sintetic_recem_nomeados_data, prepare_original_data
 from core.utils.json import load_json_to_dataframe
+from core.models.tabelas import TabelaDataframe
+from typing import Optional
+import pandas as pd
 from config import CARGO_BASE, TABELA_ORIGINAL, QTD_RECEM_NOMEADOS
 
 class InitialCommand(SimulationCommand):
 
-    def __init__(self, fpath_tabela_original:str=TABELA_ORIGINAL, qtd_recem_nomeados:int=QTD_RECEM_NOMEADOS) -> None:
+    def __init__(self, tabela_original:Optional[pd.DataFrame]=None, qtd_recem_nomeados:int=QTD_RECEM_NOMEADOS) -> None:
         super().__init__()
-        self.tabela_original = load_json_to_dataframe(fpath_tabela_original)
+        self.tabela_original = self.solve_tabela_original(tabela_original)
         self.qtd_recem_nomeados = qtd_recem_nomeados
         self.load_steps()
+
+    def solve_tabela_original(self, tabela_original:Optional[pd.DataFrame]=None, 
+                              fpath_tabela_original:str=TABELA_ORIGINAL)->pd.DataFrame:
+
+        if tabela_original is None:
+            tabela_original = load_json_to_dataframe(fpath_tabela_original)
+        
+        tabela_original = TabelaDataframe.validate(tabela_original)
+
+        return tabela_original
 
     def load_steps(self)->None:
 
