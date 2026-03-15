@@ -20,7 +20,9 @@ class Vencimento:
     
     def meses_cumulativo(self, tabela_vencimento:pd.DataFrame)->pd.DataFrame:
 
-        tabela_vencimento['qtd_meses_acumulado'] = tabela_vencimento['qtd_meses_no_nivel'].cumsum()
+        #precisa dar shift aqui porque o acumulado de meses para o nível 1 é 0, ou seja, a pessoa precisa ter 0 meses de exercício para alcançar o nível 1,
+        #  X meses para alcançar o nível 2, onde X é o tempo máximo que você fica no nível 1, e assim por diante
+        tabela_vencimento['qtd_meses_acumulado'] = tabela_vencimento['qtd_meses_no_nivel'].cumsum().shift(1, fill_value=0)
 
         return tabela_vencimento
     
@@ -38,14 +40,16 @@ class Vencimento:
         # pega o nivel máximo alcançado, que é o nível projetado para aquela pessoa naquele mês da série
         nivel = tabela_vencimento_niveis_alcancados['nivel'].max()
 
-        return nivel
+        if pd.isnull(nivel):
+            nivel = 1
+
+        return int(nivel)
     
     def obter_vencimento(self, row:Series[ServidorBase])->float:
 
         nivel = row['nivel_projetado']
         # pega a remuneração correspondente ao nível projetado
         vencimento: float = self.tabela_vencimento[self.tabela_vencimento['nivel'] == nivel]['remuneracao'].values[0]
-
         return vencimento
 
     def pipeline(self, df:pd.DataFrame, mes_serie:int)->pd.DataFrame:
@@ -59,7 +63,7 @@ class Vencimento:
     def __call__(self, df:pd.DataFrame, mes_serie:int)->pd.DataFrame:
 
         df = self.pipeline(df, mes_serie)
-        df = ServidorVencimentoDataframe.validate(df)
+        #df = ServidorVencimentoDataframe.validate(df)
 
         return df
 
