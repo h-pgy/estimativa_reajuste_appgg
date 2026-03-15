@@ -117,6 +117,7 @@ class ServidorVencimento(ServidorBase):
 
     nivel_projetado: int = Field(ge=1)
     vencimento: float = Field(ge=SALARIO_MINIMO)
+    tempo_exercicio_meses: int = Field(ge=0)
 
     @model_validator(mode='after')
     def validar_nivel_projetado(self)->Self:

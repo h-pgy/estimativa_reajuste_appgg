@@ -14,9 +14,10 @@ class Vencimento:
     def tempo_exercicio_meses_total(self, dt_inicio_exercicio_corrigida:datetime, mes_serie:int)->int:
 
         hoje = datetime.today()
-        data_projetada = adicionar_meses(dt_inicio_exercicio_corrigida, mes_serie)
-
-        return meses_passados(hoje, data_projetada)
+        data_projetada = adicionar_meses(hoje, mes_serie)
+        
+        #a data projetada é a atual e hoje é a anterior
+        return meses_passados(data_projetada, dt_inicio_exercicio_corrigida)
     
     def meses_cumulativo(self, tabela_vencimento:pd.DataFrame)->pd.DataFrame:
 
@@ -27,9 +28,9 @@ class Vencimento:
         return tabela_vencimento
     
 
-    def nivel_projetado(self, row:Series[ServidorBase], mes_serie:int)->int:
+    def nivel_projetado(self, row:Series[ServidorBase])->int:
 
-        tempo_exercicio_meses = self.tempo_exercicio_meses_total(row['dt_inicio_exercicio_corrigida'], mes_serie)
+        tempo_exercicio_meses = row['tempo_exercicio_meses']
         tabela_vencimento = self.meses_cumulativo(self.tabela_vencimento)
 
         #filtra a tabela para apenas os niveis que a pessoa alcançou, ou seja aqueles cujo qtd_meses_acumulado é
@@ -39,9 +40,6 @@ class Vencimento:
 
         # pega o nivel máximo alcançado, que é o nível projetado para aquela pessoa naquele mês da série
         nivel = tabela_vencimento_niveis_alcancados['nivel'].max()
-
-        if pd.isnull(nivel):
-            nivel = 1
 
         return int(nivel)
     
@@ -55,7 +53,8 @@ class Vencimento:
     def pipeline(self, df:pd.DataFrame, mes_serie:int)->pd.DataFrame:
 
         df = ServidorBaseDataframe.validate(df)
-        df['nivel_projetado'] = df.apply(lambda row: self.nivel_projetado(row, mes_serie), axis=1)
+        df['tempo_exercicio_meses'] = df.apply(lambda row: self.tempo_exercicio_meses_total(row['dt_inicio_exercicio_corrigida'], mes_serie), axis=1)
+        df['nivel_projetado'] = df.apply(self.nivel_projetado, axis=1)
         df['vencimento'] = df.apply(self.obter_vencimento, axis=1)
 
         return df
@@ -63,7 +62,7 @@ class Vencimento:
     def __call__(self, df:pd.DataFrame, mes_serie:int)->pd.DataFrame:
 
         df = self.pipeline(df, mes_serie)
-        #df = ServidorVencimentoDataframe.validate(df)
+        df = ServidorVencimentoDataframe.validate(df)
 
         return df
 
