@@ -1,0 +1,77 @@
+[
+    {
+        "nivel" : 1,
+        "remuneracao" : 13208.14,
+        "qtd_meses_no_nivel" : 36
+    },
+    {
+        "nivel" : 2,
+        "remuneracao" : 14528.96,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 3,
+        "remuneracao" : 14892.18,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 4,
+        "remuneracao" : 15264.48,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 5,
+        "remuneracao" : 15646.09,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 6,
+        "remuneracao" : 16037.24,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 7,
+        "remuneracao" : 17961.73,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 8,
+        "remuneracao" : 18410.77,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 9,
+        "remuneracao" : 18871.04,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 10,
+        "remuneracao" : 19342.80,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 11,
+        "remuneracao" : 19826.39,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 12,
+        "remuneracao" : 21869.74,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 13,
+        "remuneracao" : 22416.47,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 14,
+        "remuneracao" : 22976.89,
+        "qtd_meses_no_nivel" : 18
+    },
+    {
+        "nivel" : 15,
+        "remuneracao" : 23551.31,
+        "qtd_meses_no_nivel" : 18
+    }
+]
