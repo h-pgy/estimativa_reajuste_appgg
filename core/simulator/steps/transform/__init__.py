@@ -10,4 +10,4 @@ calc_vale_alimentacao = ValeAlimentacao()
 calc_contrib_iprem = ContribuicaoIprem()
 calc_contrib_inss = ContribuicaoINSS()
 calc_prev_complementar = PrevidenciaComplementar()
-total_mensal = TotalMensal
+total_mensal = TotalMensal()
