@@ -4,10 +4,10 @@ from typing import List, Callable, Generator, Optional
 
 class SimulationCommand:
 
-    def __init__(self)->None:
+    def __init__(self, initial_df:Optional[pd.DataFrame]=None)->None:
 
         self.steps: List[SimulationStep] = []
-        self.dataframe:Optional[pd.DataFrame] = None
+        self.dataframe:Optional[pd.DataFrame] = initial_df
 
     def add_step(self, name:str, message:str, function:Callable, args:Optional[dict]=None)->None:
 
@@ -42,5 +42,6 @@ class SimulationCommand:
                 step.finished = True
                 step.error_message = "Error: {}. Message: {}".format(type(e).__name__, str(e))
                 step.error = True
+                raise e
                 yield step
                 break
