@@ -10,6 +10,7 @@ class TabelaFactory:
     def __init__(self) -> None:
 
         self.calculadora_inflacao = CalculadoraFatorInflacao()
+        self.indices_disponiveis = set(self.calculadora_inflacao.INDICES.keys())
 
     def validar_tabela(self, df:pd.DataFrame)->pd.DataFrame:
 
@@ -33,7 +34,7 @@ class TabelaFactory:
         valid_data = []
         for nivel in table_dict:
             valid_nivel = NivelTabela(**nivel)
-            valid_data.append(valid_nivel.dict())
+            valid_data.append(valid_nivel.model_dump())
         
         df = pd.DataFrame(valid_data)
         df = self.validar_tabela(df)
@@ -42,8 +43,8 @@ class TabelaFactory:
 
     def obter_fator_inflacao(self, indice:str, data_inicial:str, data_final:str)->float:
 
-        if indice not in self.calculadora_inflacao.INDICES:
-            raise ValueError(f"Índice de inflação '{indice}' não disponível. Índices disponíveis: {self.calculadora_inflacao.INDICES}")
+        if indice not in self.indices_disponiveis:
+            raise ValueError(f"Índice de inflação '{indice}' não disponível. Índices disponíveis: {self.indices_disponiveis}")
 
         return self.calculadora_inflacao(data_inicial, data_final)
     
