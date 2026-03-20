@@ -28,7 +28,7 @@ class AppStateManager:
     def __initialize_namespace(self, namespace_name:str, state:SessionStateProxy)->SessionStateNamespace:
 
         if namespace_name in state:
-            raise ValueError('Namespace já existe no session state. Escolha um nome diferente para evitar conflitos.')
+            return state[namespace_name]
         namespace_obj = SessionStateNamespace(name=namespace_name, data={}, steps=[], flags={})
         state[namespace_name] = namespace_obj
         

@@ -25,6 +25,7 @@ class PipelineStatus:
                             #hack para aparecer na UI
                             time.sleep(2)
                             step = next(step_gen)
+                            state.add_step(step.key)
                             if step.initialized and not step.finished:
                                 with cols[0]:
                                     st.info(f'{step.name} iniciado.')
@@ -45,9 +46,9 @@ class PipelineStatus:
             status.update(label = "Execução finalizada!", state="complete")
         return state
 
-        def __call__(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
+    def __call__(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
 
-            return self.status_pipeline(pipeline, state, container)
+        return self.status_pipeline(pipeline, state, container)
                     
 
 

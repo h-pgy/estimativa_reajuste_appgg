@@ -16,7 +16,6 @@ class Microdados:
             with st.expander("Veja os detalhes sobre os dados:"):
                 st.markdown(explicacao)
 
-    @st.cache_data
     def download_as_csv(self, df:pd.DataFrame)->bytes:
 
         return df.to_csv(index=False).encode('utf-8')

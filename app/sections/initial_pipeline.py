@@ -16,7 +16,13 @@ class InitialPipelineSection:
     def render(self)->None:
 
         pipeline_status = PipelineStatus()
-        state = pipeline_status.status_pipeline(pipeline=self.pipeline, state=self.state, container=self.container)
+        state = pipeline_status(pipeline=self.pipeline, state=self.state, container=self.container)
+        for step in state.namespace.steps:
+            df = state.get_data(step)
+            with st.container(border=True) as container:
+                if df is not None:
+                    component = Microdados()
+                    component(df=df, data_name=step, explicacao='Teste', component_container=st.container())
     
     def __call__(self)->None:
         self.render()

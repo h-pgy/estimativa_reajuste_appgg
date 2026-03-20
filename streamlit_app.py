@@ -1,5 +1,5 @@
 import streamlit as st
-from app.sections.test import InitialPipelineSection
+from app.sections.initial_pipeline import InitialPipelineSection
 
 st.header("Hell World - APP Simulador Reajuste Salarial Prefeitura de São Paulo")
 
