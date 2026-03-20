@@ -26,16 +26,19 @@ class InitialCommand(SimulationCommand):
 
     def load_steps(self)->None:
 
-        self.add_step('Cargamento dos dados originais', 
+        self.add_step('Cargamento dos dados originais',
+                      'load_original_data',
                       'Carregando os dados originais dos servidores no Portal de Dados Abertos', 
                       load_original_data)
         
         self.add_step('Limpando dados originais',
+                      'clean_original_data',
                       'Preparando os dados originais dos servidores para análise',
                       prepare_original_data,
                       args={'df_tabela_original':self.tabela_original})
         
         self.add_step('Gerando dados sintéticos de recém nomeados',
+                      'gen_sintetic_data',
                       f'Gerando dados sintéticos dos servidores da carreira {CARGO_BASE} recém nomeados que ainda não estão no portal de Dados Abertos',
                       make_sintetic_recem_nomeados_data,
                       args={'qtd_servidores' : self.qtd_recem_nomeados}
