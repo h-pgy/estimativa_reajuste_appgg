@@ -17,7 +17,7 @@ class PipelineStatus:
             qtd_steps = pipeline.num_steps
             step_size = 1/qtd_steps
             step_gen = pipeline.execute()
-            with st.status("Preparando execução...", expanded=True):
+            with st.status("Preparando execução...", expanded=True) as status:
                 for i in range(qtd_steps):
                     with st.container(border=True):
                         cols = st.columns(2)
@@ -36,10 +36,13 @@ class PipelineStatus:
                                 with cols[1]:
                                     if step.error:
                                         st.error(f'Erro no step {step.name}: {step.error}')
+                                        status.update(label = "Erro na execução!", state="error")
                                         break
                                     if step.sucess:
                                         st.success(f'Step {step.name} finalizado com sucesso!')
                                         state.set_data(step.key, step.result)
+            time.sleep(2)
+            status.update(label = "Execução finalizada!", state="complete")
         return state
 
         def __call__(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
