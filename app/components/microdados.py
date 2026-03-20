@@ -3,6 +3,10 @@ from streamlit.delta_generator import DeltaGenerator
 import pandas as pd
 
 
+@st.fragment
+def download_button(csv_data:bytes, data_name:str)->bool:
+    return st.download_button(label="Faça Download dos Dados", data=csv_data, file_name=f"{data_name}.csv", mime="text/csv")
+
 class Microdados:
     
     def render_dataframe(self, df:pd.DataFrame, container_df:DeltaGenerator)->None:
@@ -20,11 +24,12 @@ class Microdados:
 
         return df.to_csv(index=False).encode('utf-8')
     
+    @st.fragment
     def download_as_csv_button(self, df:pd.DataFrame, data_name:str, button_container:DeltaGenerator)->None:
 
         with button_container:
             csv_data = self.download_as_csv(df)
-            st.download_button(label="Faça Download dos Dados", data=csv_data, file_name=f"{data_name}.csv", mime="text/csv")
+            button = download_button(csv_data, data_name)
 
     def pipeline(self, df:pd.DataFrame, data_name:str, explicacao:str, component_container:DeltaGenerator)->None:
 
