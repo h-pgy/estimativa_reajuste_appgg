@@ -9,7 +9,9 @@ from config import CARGO_BASE, TABELA_ORIGINAL, QTD_RECEM_NOMEADOS
 class InitialCommand(SimulationCommand):
 
     def __init__(self, tabela_original:Optional[pd.DataFrame]=None, qtd_recem_nomeados:int=QTD_RECEM_NOMEADOS) -> None:
-        super().__init__()
+        
+        nome = 'Preparação dos dados originais'
+        super().__init__(name=nome)
         self.tabela_original = self.solve_tabela_original(tabela_original)
         self.qtd_recem_nomeados = qtd_recem_nomeados
         self.load_steps()

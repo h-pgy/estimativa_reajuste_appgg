@@ -5,8 +5,9 @@ from typing import List, Callable, Generator, Optional
 
 class SimulationCommand:
 
-    def __init__(self, initial_df:Optional[pd.DataFrame]=None)->None:
+    def __init__(self, name:str, initial_df:Optional[pd.DataFrame]=None)->None:
 
+        self.name = name
         self.steps: OrderedDict[str, SimulationStep] = OrderedDict()
         self.dataframe:Optional[pd.DataFrame] = initial_df
 

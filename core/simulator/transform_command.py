@@ -20,7 +20,8 @@ class ProjectionCommand(SimulationCommand):
     def __init__(self, df_servidores_limpo:pd.DataFrame, tabela_projetada:pd.DataFrame, mes_projecao:int) -> None:
         
         df_servidores_limpo = ServidorBaseDataframe.validate(df_servidores_limpo)
-        super().__init__(initial_df=df_servidores_limpo)
+        nome = "Projeção dos gastos mensais com os servidores"
+        super().__init__(name=nome, initial_df=df_servidores_limpo)
         self.tabela_projetada = TabelaDataframe.validate(tabela_projetada)
         self.mes_projecao = mes_projecao
         self.load_steps()
