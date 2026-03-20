@@ -9,7 +9,7 @@ class SessionStateNamespace(BaseModel):
     steps: List[str]
     flags: Dict[str, bool]
 
-    model_config = ConfigDict(validate_assignment=True)
+    model_config = ConfigDict(validate_assignment=True, arbitrary_types_allowed=True)
 
     @field_validator('steps')
     def validate_steps(cls, v)->List[str]:

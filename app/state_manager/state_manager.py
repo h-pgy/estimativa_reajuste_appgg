@@ -8,7 +8,7 @@ class AppStateManager:
     def __init__(self, namespace_name:str, session_state: SessionStateProxy)->None:
 
         self.__namespace_name = namespace_name
-        self.namespace: SessionStateNamespace = self.__initialize_namespace(session_state)
+        self.namespace: SessionStateNamespace = self.__initialize_namespace(namespace_name, session_state)
 
     @property
     def namespace_name(self) -> str:
@@ -20,15 +20,17 @@ class AppStateManager:
             if not isinstance(valor, SessionStateNamespace):
                 raise ValueError('O valor atribuído a namespace deve ser uma instância de SessionStateNamespace.')
 
-        if nome == 'namespace_name':
+        if nome == 'namespace_name' and hasattr(self, 'namespace_name'):
             raise AttributeError('O atributo namespace_name é somente leitura e não pode ser modificado após a inicialização.')
+        
+        super().__setattr__(nome, valor)
 
-    def __initialize_namespace(self, state:SessionStateProxy)->SessionStateNamespace:
+    def __initialize_namespace(self, namespace_name:str, state:SessionStateProxy)->SessionStateNamespace:
 
-        if self.namespace_name in state:
+        if namespace_name in state:
             raise ValueError('Namespace já existe no session state. Escolha um nome diferente para evitar conflitos.')
-        namespace_obj = SessionStateNamespace(name=self.namespace_name, data={}, steps=[], flags={})
-        state[self.namespace_name] = namespace_obj
+        namespace_obj = SessionStateNamespace(name=namespace_name, data={}, steps=[], flags={})
+        state[namespace_name] = namespace_obj
         
         return namespace_obj
     
