@@ -3,16 +3,23 @@ from ..abstract_component import AbstractComponent
 from ..component_item_model import ComponentItem
 from streamlit.delta_generator import DeltaGenerator
 import streamlit as st
+import time
 
 
 class StepStatusComponent(AbstractComponent):
+
+    def spinner(self, message:str):
+        with st.spinner(message):
+            #hack so spinner will show even if it runs fast
+            time.sleep(1)
+            
 
     def solve_status(self, step:SimulationStep)->ComponentItem:
 
         if step.initialized and not step.finished:
             return ComponentItem(
                 args=[f"Step {step.name} initialized."],
-                write_func=st.spinner
+                write_func=self.spinner
             )
         if step.finished and step.sucess:
             return ComponentItem(
