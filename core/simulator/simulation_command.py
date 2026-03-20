@@ -1,6 +1,7 @@
 from ..models.simulation_step import SimulationStep
 from collections import OrderedDict
 import pandas as pd
+from core.utils.str import to_snake_case
 from typing import List, Callable, Generator, Optional
 
 class SimulationCommand:
@@ -8,6 +9,7 @@ class SimulationCommand:
     def __init__(self, name:str, initial_df:Optional[pd.DataFrame]=None)->None:
 
         self.name = name
+        self.key = to_snake_case(self.name)
         self.steps: OrderedDict[str, SimulationStep] = OrderedDict()
         self.dataframe:Optional[pd.DataFrame] = initial_df
 
