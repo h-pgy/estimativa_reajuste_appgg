@@ -49,3 +49,16 @@ class SimulationStep(BaseModel):
             raise ValueError('A step cannot have an error without an error message')
         
         return self
+
+    @property
+    def current_status(self)->str:
+        if self.error:
+            return 'error'
+        elif self.sucess:
+            return 'success'
+        elif self.finished:
+            return 'finished'
+        elif self.initialized:
+            return 'initialized'
+        else:
+            return 'not started'
