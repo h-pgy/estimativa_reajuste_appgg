@@ -18,6 +18,13 @@ class SimulationCommand:
                               args=args)
         self.steps[key] = step
 
+    def get_step(self, key:str)->SimulationStep:
+
+        if key not in self.steps:
+            raise ValueError(f'Step com a key {key} não existente')
+        
+        return self.steps[key]
+
     def solve_func_args(self, step:SimulationStep)->dict:
         func_kwargs = {}
         if step.args is not None:
