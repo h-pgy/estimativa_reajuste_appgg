@@ -24,6 +24,10 @@ class SimulationCommand:
             raise ValueError(f'Step com a key {key} não existente')
         
         return self.steps[key]
+    
+    @property
+    def num_steps(self)->int:
+        return len(self.steps)
 
     def solve_func_args(self, step:SimulationStep)->dict:
         func_kwargs = {}
