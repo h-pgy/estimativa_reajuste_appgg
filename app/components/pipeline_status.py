@@ -21,13 +21,13 @@ class PipelineStatus:
                 for i in range(qtd_steps):
                     with st.container(border=True):
                         cols = st.columns(2)
-                        with st.spinner(f"Executando step {i+1} de {qtd_steps}..."):
+                        with st.spinner(f"Executando o processo {i+1} de {qtd_steps}..."):
                             #hack para aparecer na UI
                             time.sleep(2)
                             step = next(step_gen)
                             if step.initialized and not step.finished:
                                 with cols[0]:
-                                    st.info(f'Step {step.name} iniciado.')
+                                    st.info(f'{step.name} iniciado.')
                                 step = next(step_gen)
                             if step.finished:
                                 i += 1
@@ -35,11 +35,11 @@ class PipelineStatus:
                                 progress_bar.progress(progress)
                                 with cols[1]:
                                     if step.error:
-                                        st.error(f'Erro no step {step.name}: {step.error}')
+                                        st.error(f'Erro no processo {step.name}: {step.error}')
                                         status.update(label = "Erro na execução!", state="error")
                                         break
                                     if step.sucess:
-                                        st.success(f'Step {step.name} finalizado com sucesso!')
+                                        st.success(f'{step.name} finalizado com sucesso!')
                                         state.set_data(step.key, step.result)
             time.sleep(2)
             status.update(label = "Execução finalizada!", state="complete")
