@@ -1,4 +1,5 @@
 from ..models.simulation_step import SimulationStep
+from collections import OrderedDict
 import pandas as pd
 from typing import List, Callable, Generator, Optional
 
@@ -6,14 +7,16 @@ class SimulationCommand:
 
     def __init__(self, initial_df:Optional[pd.DataFrame]=None)->None:
 
-        self.steps: List[SimulationStep] = []
+        self.steps: OrderedDict[str, SimulationStep] = OrderedDict()
         self.dataframe:Optional[pd.DataFrame] = initial_df
 
-    def add_step(self, name:str, message:str, function:Callable, args:Optional[dict]=None)->None:
+    def add_step(self, name:str, key:str, message:str, function:Callable, args:Optional[dict]=None)->None:
 
-        step = SimulationStep(name=name, message=message, function=function, 
+        if key in self.steps:
+            raise ValueError(f'Chave {key} já existente nos steps.')
+        step = SimulationStep(name=name, key=key, message=message, function=function, 
                               args=args)
-        self.steps.append(step)
+        self.steps[key] = step
 
     def solve_func_args(self, step:SimulationStep)->dict:
         func_kwargs = {}
@@ -22,7 +25,7 @@ class SimulationCommand:
         return func_kwargs
 
     def execute(self) -> Generator[SimulationStep, None, None]:
-        for step in self.steps:
+        for key, step in self.steps.items():
             # 1. Sinaliza início
             step.initialized = True
             yield step
