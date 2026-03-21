@@ -1,13 +1,22 @@
 import streamlit as st
 from streamlit.delta_generator import DeltaGenerator
 import pandas as pd
-
+import io
 
 @st.fragment
 def download_button(csv_data:bytes, data_name:str)->bool:
     return st.download_button(label="Faça Download dos Dados", data=csv_data, file_name=f"{data_name}.csv", mime="text/csv")
 
 class Microdados:
+
+    def renderizar_info_dataframe(self, container: DeltaGenerator, df: pd.DataFrame):
+        # Captura a saída do df.info()
+        buffer = io.StringIO()
+        df.info(buf=buffer)
+        s = buffer.getvalue()
+        
+        container.markdown("### Estrutura Técnica do Dataset")
+        container.code(s, language="text")
     
     def render_dataframe(self, df:pd.DataFrame, container_df:DeltaGenerator)->None:
 
@@ -17,8 +26,8 @@ class Microdados:
     def add_explicacao(self, explicacao:str, container_explicacao:DeltaGenerator)->None:
 
         with container_explicacao:
-            with st.expander("Veja os detalhes sobre os dados:"):
-                st.markdown(explicacao)
+            st.markdown('#### Explicação dos Dados')
+            st.markdown(explicacao)
 
     def download_as_csv(self, df:pd.DataFrame)->bytes:
 

@@ -4,9 +4,14 @@ import pandas as pd
 from typing import Generator
 from app.state_manager import AppStateManager
 from core.simulator.simulation_command import SimulationCommand, SimulationStep
+from app.components.microdados import Microdados
 import time
 
 class PipelineStatus:
+
+    def __init__(self)->None:
+
+        self.microdados = Microdados()
 
     def status_pipeline(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
 
@@ -20,7 +25,7 @@ class PipelineStatus:
             with st.status("Preparando execução...", expanded=True) as status:
                 for i in range(qtd_steps):
                     with st.container(border=True):
-                        cols = st.columns(2)
+                        cols = st.columns(3)
                         with st.spinner(f"Executando o processo {i+1} de {qtd_steps}..."):
                             #hack para aparecer na UI
                             time.sleep(2)
@@ -42,6 +47,12 @@ class PipelineStatus:
                                     if step.sucess:
                                         st.success(f'{step.name} finalizado com sucesso!')
                                         state.set_data(step.key, step.result)
+                                        with cols[2]:
+                                            with st.popover("Resumo dos dados"):
+                                                self.microdados.renderizar_info_dataframe(container=st.container(), df=step.result)
+                                            with st.popover('Detalhar dados'):
+                                                self.microdados(df=step.result, data_name=step.name, explicacao=step.message, component_container=st.container())
+
             time.sleep(2)
             status.update(label = "Execução finalizada!", state="complete")
         return state
