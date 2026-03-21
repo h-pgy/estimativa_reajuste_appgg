@@ -1,24 +1,22 @@
 from pydantic import BaseModel, field_validator, ConfigDict
 import pandas as pd
-from typing import List, Dict
+from collections import OrderedDict
+from core.models.simulation_step import SimulationStep
 
 class SessionStateNamespace(BaseModel):
 
     name: str
-    data: Dict[str, pd.DataFrame]
-    steps: List[str]
-    flags: Dict[str, bool]
+    data: OrderedDict[str, pd.DataFrame]
+    steps: OrderedDict[str, SimulationStep]
+    flags: OrderedDict[str, bool]
 
     model_config = ConfigDict(validate_assignment=True, arbitrary_types_allowed=True)
 
     @field_validator('steps')
-    def validate_steps(cls, v)->List[str]:
-        if not isinstance(v, list):
-            raise ValueError('Steps deve ser uma lista de strings.')
+    def validate_steps(cls, v)->OrderedDict[str, SimulationStep]:
         
-        #checa se há duplicados
-        if len(set(v)) != len(v):
-            raise ValueError('Steps não pode conter valores duplicados.')
-        
+        for value in v.values():
+            if not isinstance(value, SimulationStep):
+                raise ValueError('Todos os valores em steps devem ser instâncias de SimulationStep.')    
         return v
 

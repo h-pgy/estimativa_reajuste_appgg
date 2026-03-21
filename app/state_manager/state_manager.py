@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from .session_state_model import SessionStateNamespace
+from core.models.simulation_step import SimulationStep
 from streamlit.runtime.state.session_state_proxy import SessionStateProxy
 
 class AppStateManager:
@@ -45,19 +46,36 @@ class AppStateManager:
             raise ValueError('O valor atribuído deve ser um DataFrame do pandas.')
         self.namespace.data[key] = value
 
-    def add_step(self, step_name:str)->None:
-        if step_name in self.namespace.steps:
-            raise ValueError(f'Step "{step_name}" já existe no namespace "{self.namespace_name}".')
-        self.namespace.steps.append(step_name)
+    def get_step(self, key:str)->SimulationStep:
+        
+        if key not in self.namespace.steps:
+            raise KeyError(f'Chave "{key}" não encontrada no namespace "{self.namespace_name}".')
+        
+        return self.namespace.steps[key]
+        
+    def add_step(self, step:SimulationStep)->SimulationStep:
 
-    @property
-    def current_step(self) -> str | None:
-        return self.namespace.steps[-1] if self.namespace.steps else None
+        if not isinstance(step, SimulationStep):
+            raise ValueError('Step must be a SimulationStep object')
+        key = step.key
+        if key in self.namespace.steps:
+            return self.get_step(key)
+        self.namespace.steps[key] = step
+        return step
     
-    def get_step(self, posit:int)->str:
-        if posit < 0 or posit >= len(self.namespace.steps):
-            raise IndexError(f'Posição {posit} está fora dos limites da lista de steps.')
-        return self.namespace.steps[posit]
+    @property
+    def current_step(self) -> SimulationStep | None:
+        last_key = list(self.namespace.steps.keys())[-1] if self.namespace.steps else None
+        if last_key is None:
+            return None
+        return self.get_step(last_key)
+    
+    def is_current_step(self, step:SimulationStep)->bool:
+
+        current_step = self.current_step
+        if current_step is None:
+            return False
+        return current_step.key == step.key
     
     def set_flag(self, flag_name:str, value:bool)->None:
         if not isinstance(value, bool):
