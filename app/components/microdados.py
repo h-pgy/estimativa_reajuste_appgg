@@ -9,15 +9,20 @@ def download_button(csv_data:bytes, data_name:str)->bool:
 
 class Microdados:
 
-    def renderizar_info_dataframe(self, container: DeltaGenerator, df: pd.DataFrame):
-        # Captura a saída do df.info()
-        buffer = io.StringIO()
-        df.info(buf=buffer)
-        s = buffer.getvalue()
+    def exibir_sumario_tecnico(self, container: DeltaGenerator, df: pd.DataFrame):
+        # Construção do DataFrame de metadados
+        df_info = pd.DataFrame({
+            'Coluna': df.columns,
+            'Tipo de Dado': df.dtypes.values.astype(str),
+            'Valores Não Nulos': df.count().values,
+            'Valores Nulos': df.isna().sum().values,
+            '% de Nulos': (df.isna().sum().values / len(df) * 100).round(2)
+        })
         
-        container.markdown("### Estrutura Técnica do Dataset")
-        container.code(s, language="text")
-    
+        # Renderização no Streamlit
+        container.subheader("Sumário Técnico do Conjunto de Dados")
+        container.dataframe(df_info, hide_index=True, use_container_width=True)
+        
     def render_dataframe(self, df:pd.DataFrame, container_df:DeltaGenerator)->None:
 
         with container_df:

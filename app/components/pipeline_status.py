@@ -49,7 +49,7 @@ class PipelineStatus:
                                         state.set_data(step.key, step.result)
                                         with cols[2]:
                                             with st.popover("Resumo dos dados"):
-                                                self.microdados.renderizar_info_dataframe(container=st.container(), df=step.result)
+                                                self.microdados.exibir_sumario_tecnico(container=st.container(), df=step.result)
                                             with st.popover('Detalhar dados'):
                                                 self.microdados(df=step.result, data_name=step.name, explicacao=step.message, component_container=st.container())
 
