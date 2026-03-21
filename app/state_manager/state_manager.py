@@ -3,6 +3,7 @@ import pandas as pd
 from .session_state_model import SessionStateNamespace
 from core.models.simulation_step import SimulationStep
 from streamlit.runtime.state.session_state_proxy import SessionStateProxy
+from collections import OrderedDict
 
 class AppStateManager:
 
@@ -30,7 +31,7 @@ class AppStateManager:
 
         if namespace_name in state:
             return state[namespace_name]
-        namespace_obj = SessionStateNamespace(name=namespace_name, data={}, steps=[], flags={})
+        namespace_obj = SessionStateNamespace(name=namespace_name, data=OrderedDict(), steps=OrderedDict(), flags=OrderedDict())
         state[namespace_name] = namespace_obj
         
         return namespace_obj

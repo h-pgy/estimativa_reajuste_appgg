@@ -25,7 +25,7 @@ class PipelineStatus:
                             #hack para aparecer na UI
                             time.sleep(2)
                             step = next(step_gen)
-                            state.add_step(step.key)
+                            state.add_step(step)
                             if step.initialized and not step.finished:
                                 with cols[0]:
                                     st.info(f'{step.name} iniciado.')
