@@ -13,6 +13,28 @@ class PipelineStatus:
 
         self.microdados = Microdados()
 
+    def initialized(self, step:SimulationStep)->None:
+        
+        st.info(f'{step.name} iniciado.')
+
+    def error(self, step:SimulationStep, status_container:DeltaGenerator)->None:
+
+        st.error(f'Erro no processo {step.name}: {step.error}')
+        status_container.update(label = "Erro na execução!", state="error")
+
+    def sucess(self, step:SimulationStep, state:AppStateManager)->None:
+
+        st.success(f'{step.name} finalizado com sucesso!')
+        state.set_data(step.key, step.result)#aqui tá errado é o objeto de state
+
+    def render_data(self, step:SimulationStep)->None:
+
+        with st.popover("Resumo dos dados"):
+            self.microdados.exibir_sumario_tecnico(container=st.container(), df=step.result)
+        with st.popover('Detalhar dados'):
+            self.microdados(df=step.result, data_name=step.name, explicacao=step.message, component_container=st.container())
+
+
     def status_pipeline(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
 
         with container:
@@ -33,7 +55,7 @@ class PipelineStatus:
                             state.add_step(step)
                             if step.initialized and not step.finished:
                                 with cols[0]:
-                                    st.info(f'{step.name} iniciado.')
+                                    self.initialized(step)
                                 step = next(step_gen)
                             if step.finished:
                                 i += 1
@@ -41,20 +63,15 @@ class PipelineStatus:
                                 progress_bar.progress(progress)
                                 with cols[1]:
                                     if step.error:
-                                        st.error(f'Erro no processo {step.name}: {step.error}')
-                                        status.update(label = "Erro na execução!", state="error")
+                                        self.error(step, status)
                                         break
                                     if step.sucess:
-                                        st.success(f'{step.name} finalizado com sucesso!')
-                                        state.set_data(step.key, step.result)
+                                        self.sucess(step, state)
                                         with cols[2]:
-                                            with st.popover("Resumo dos dados"):
-                                                self.microdados.exibir_sumario_tecnico(container=st.container(), df=step.result)
-                                            with st.popover('Detalhar dados'):
-                                                self.microdados(df=step.result, data_name=step.name, explicacao=step.message, component_container=st.container())
+                                            self.render_data(step)
 
             time.sleep(2)
-            status.update(label = "Execução finalizada!", state="complete")
+            status.update(label = "Execução finalizada! Clique aqui para acessar os detalhes", state="complete")
         return state
 
     def __call__(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
