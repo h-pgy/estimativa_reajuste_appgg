@@ -4,22 +4,33 @@ from .session_state_model import SessionStateNamespace
 from core.models.simulation_step import SimulationStep
 from streamlit.runtime.state.session_state_proxy import SessionStateProxy
 from collections import OrderedDict
+from pydantic import TypeAdapter
 
 class AppStateManager:
 
     def __init__(self, namespace_name:str, session_state: SessionStateProxy)->None:
 
         self.__namespace_name = namespace_name
+        self.check_session_state = TypeAdapter(SessionStateNamespace).validate_python
         self.namespace: SessionStateNamespace = self.__initialize_namespace(namespace_name, session_state)
 
     @property
     def namespace_name(self) -> str:
         return self.__namespace_name
+    
+    def __is_SessionStateObj(self, obj:object)->bool:
+
+        try:
+            self.check_session_state(obj)
+            return True
+        except Exception as e:
+            print(f'Erro ao validar objeto como SessionStateNamespace: {e}')
+            return False
 
     def __setattr__(self, nome, valor):
 
         if nome == 'namespace':
-            if not isinstance(valor, SessionStateNamespace):
+            if not self.__is_SessionStateObj(valor):
                 raise ValueError('O valor atribuído a namespace deve ser uma instância de SessionStateNamespace.')
 
         if nome == 'namespace_name' and hasattr(self, 'namespace_name'):
@@ -27,11 +38,20 @@ class AppStateManager:
         
         super().__setattr__(nome, valor)
 
+    def __get_saved_namespace(self, namespace_name:str, state:SessionStateProxy)->SessionStateNamespace:
+        saved_namespace = state[namespace_name]
+        
+        if not isinstance(saved_namespace, (dict, OrderedDict)):
+            saved_namespace = saved_namespace.model_dump() if hasattr(saved_namespace, 'model_dump') else saved_namespace.__dict__
+        
+        return SessionStateNamespace(**saved_namespace)
+
     def __initialize_namespace(self, namespace_name:str, state:SessionStateProxy)->SessionStateNamespace:
 
         if namespace_name in state:
-            return state[namespace_name]
-        namespace_obj = SessionStateNamespace(name=namespace_name, data=OrderedDict(), steps=OrderedDict(), flags=OrderedDict())
+            namespace_obj = self.__get_saved_namespace(namespace_name, state)
+        else:
+            namespace_obj = SessionStateNamespace(name=namespace_name, data=OrderedDict(), steps=OrderedDict(), flags=OrderedDict())
         state[namespace_name] = namespace_obj
         
         return namespace_obj
