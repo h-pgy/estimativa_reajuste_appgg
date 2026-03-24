@@ -14,8 +14,13 @@ nav_items = [
     {"label": "⚙️ Dados e Pipeline", "anchor": "carregamento-e-tratamento-dos-dados-de-servidores-ativos"}
 ]
 
+# 2. Inicialização do Session State
+if "run_pipeline" not in st.session_state:
+    st.session_state.run_pipeline = False
+
 header = st.empty()
 sobre = st.empty()
+cta_container = st.container()
 pipeline_inicial  = st.empty()
 
 with header.container():
@@ -30,9 +35,23 @@ with sobre.container():
     about_section = AboutSection(container_section)
     about_section()
 
-with pipeline_inicial.container():
-    container_section = st.container(border=True)
-    with container_section:
-        st.header('Carregamento e tratamento dos dados de servidores ativos.')
-    initial_section = InitialPipelineSection(container_section)
-    initial_section()
+# 3. Botão de Ação (CTA)
+with cta_container:
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        # Botão com tipo 'primary' (cor de destaque do tema)
+        if st.button("Iniciar a simulação", type="primary", use_container_width=True):
+            st.session_state.run_pipeline = True    
+
+if st.session_state.run_pipeline:
+    with pipeline_inicial.container():
+        container_section = st.container(border=True)
+        with container_section:
+            st.header('Carregamento e tratamento dos dados de servidores ativos.')
+        initial_section = InitialPipelineSection(container_section)
+        initial_section()
+
+
+else:
+    with pipeline_inicial.container():
+        st.info("Clique no botão acima para carregar os dados e iniciar o pipeline.")

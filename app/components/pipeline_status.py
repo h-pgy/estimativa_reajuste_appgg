@@ -25,7 +25,7 @@ class PipelineStatus:
     def sucess(self, step:SimulationStep, state:AppStateManager)->None:
 
         st.success(f'{step.name} finalizado com sucesso!')
-        state.set_data(step.key, step.result)#aqui tá errado é o objeto de state
+        state.set_data(step.key, step.result)
 
     def render_data(self, step:SimulationStep)->None:
 
@@ -35,7 +35,7 @@ class PipelineStatus:
             self.microdados(df=step.result, data_name=step.name, explicacao=step.message, component_container=st.container())
 
 
-    def status_pipeline(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
+    def status_pipeline(self, pipeline:SimulationCommand, state:AppStateManager)->AppStateManager:
 
         st.markdown(f"#### {pipeline.name}")
         progress=0
@@ -69,6 +69,8 @@ class PipelineStatus:
                                     with cols[2]:
                                         self.render_data(step)
 
+        df_final = step.result
+        state.set_data('dados_finais', df_final)
         time.sleep(2)
         status.update(label = "Execução finalizada! Clique aqui para acessar os detalhes", state="complete")
         return state
@@ -78,7 +80,7 @@ class PipelineStatus:
         with container:
             internal_container = st.container(border=True)
             with internal_container:
-                return self.status_pipeline(pipeline, state, container)
+                return self.status_pipeline(pipeline, state)
                     
 
 
