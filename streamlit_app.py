@@ -2,6 +2,7 @@ import streamlit as st
 from app.sections.initial_pipeline import InitialPipelineSection
 from app.sections.about import AboutSection
 from app.sections.header import HeaderSection
+from app.sections.start_simulation import SimulationParametersSection
 
 st.set_page_config(
     layout="wide", 
@@ -11,7 +12,8 @@ st.set_page_config(
 
 nav_items = [
     {"label": "📊 Sobre o Projeto", "anchor": "sobre-o-simreajuste"},
-    {"label": "⚙️ Dados e Pipeline", "anchor": "carregamento-e-tratamento-dos-dados-de-servidores-ativos"}
+    {"label": "⚙️ Parâmetros da Simulação", "anchor": "parametros-da-simulacao"},
+    {"label": "🛠️ Dados e Pipeline", "anchor": "carregamento-e-tratamento-dos-dados-de-servidores-ativos"}
 ]
 
 # 2. Inicialização do Session State
@@ -36,13 +38,12 @@ with sobre.container():
     about_section()
 
 # Lógica do Botão (SÓ APARECE SE NÃO FOI CLICADO)
-if not st.session_state.run_pipeline:
-    with cta_placeholder.container():
-        _, col_btn, _ = st.columns([1, 2, 1])
-        with col_btn:
-            if st.button("Iniciar a simulação", type="primary", use_container_width=True):
-                st.session_state.run_pipeline = True
-                st.rerun()  
+with cta_placeholder.container():
+    container_section = st.container(border=True)
+    with container_section:
+        st.header("Parâmetros da Simulação")
+        params_section = SimulationParametersSection()
+        params_section()
 
 if st.session_state.run_pipeline:
     with pipeline_inicial.container():
@@ -51,7 +52,6 @@ if st.session_state.run_pipeline:
             st.header('Carregamento e tratamento dos dados de servidores ativos.')
         initial_section = InitialPipelineSection(container_section)
         initial_section()
-
 
 else:
     with pipeline_inicial.container():
