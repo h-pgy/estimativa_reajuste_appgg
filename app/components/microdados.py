@@ -45,14 +45,21 @@ class Microdados:
             csv_data = self.download_as_csv(df)
             button = download_button(csv_data, data_name)
 
-    def pipeline(self, df:pd.DataFrame, data_name:str, explicacao:str, component_container:DeltaGenerator)->None:
+    def pipeline(self, df:pd.DataFrame, data_name:str, explicacao:str, component_container:DeltaGenerator, single_column:bool)->None:
 
         with component_container:
-            col_df, col_buttons = st.columns(2)
-            self.render_dataframe(df, col_df)
-            self.add_explicacao(explicacao, col_buttons)
-            with st.spinner('Salvando os dados em csv...'):
-                self.download_as_csv_button(df, data_name, col_buttons)
+            if not single_column:
+                col_df, col_buttons = st.columns(2)
+                self.render_dataframe(df, col_df)
+                self.add_explicacao(explicacao, col_buttons)
+                with st.spinner('Salvando os dados em csv...'):
+                    self.download_as_csv_button(df, data_name, col_buttons)
+            else:
+                self.render_dataframe(df, component_container)
+                with st.spinner('Salvando os dados em csv...'):
+                    self.download_as_csv_button(df, data_name, component_container)
+                self.add_explicacao(explicacao, component_container)
+                
 
-    def __call__(self, df:pd.DataFrame, data_name:str, explicacao:str, component_container:DeltaGenerator)->None:
-        self.pipeline(df, data_name, explicacao, component_container)
+    def __call__(self, df:pd.DataFrame, data_name:str, explicacao:str, component_container:DeltaGenerator, single_column:bool=False)->None:
+        self.pipeline(df, data_name, explicacao, component_container, single_column)

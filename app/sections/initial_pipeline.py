@@ -36,7 +36,8 @@ class InitialPipelineSection:
             summary = DataSummaryComponent(df_final)
             self.microdados(df_final, data_name='Dados origignais tratados', 
                             explicacao=summary(),
-                            component_container=container_df_final)
+                            component_container=container_df_final,
+                            single_column=True)
             
     
     def __call__(self)->None:
