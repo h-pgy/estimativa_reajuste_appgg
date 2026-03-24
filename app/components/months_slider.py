@@ -23,7 +23,6 @@ class SimulationMonthsSlider:
                 label="Meses de simulação",
                 min_value=self.min,
                 max_value=self.max,
-                value=st.session_state.simulation_months,
                 key="simulation_months",
                 label_visibility="collapsed",
                 disabled=is_disabled
