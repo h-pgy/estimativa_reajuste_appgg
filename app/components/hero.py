@@ -19,10 +19,6 @@ class Hero:
         O simulador resolve a complexidade de projetar o impacto orçamentário da aplicação de reajustes em carreiras com distribuições desiguais entre os níveis, 
         incorporando ainda o fato de que os servidores progridem na carreira ao longo do tempo. Ele permite quantificar e simular em até **48 meses** o impacto de reajustes, considerando a evolução da pirâmide funcional e a progressão dos servidores, 
         e permitindo aplicar reajustes com base em **três** métodos distintos:
-        1. **Índices Inflacionários:** Correção baseada no IPCA acumulado em diferentes períodos históricos.
-        2. **Equiparação de Tabelas:** Unificação com estruturas de outras carreiras.
-        3. **Tabelas ad hoc:** Definição de uma nova estrutura de vencimentos do zero, com base em parâmetros definidos pelo usuário.
-        .
         """
         p2 = """
         Ao processar o momento exato em 
