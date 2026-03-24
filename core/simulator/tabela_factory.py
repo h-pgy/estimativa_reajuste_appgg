@@ -15,8 +15,6 @@ class TabelaFactory:
     def validar_tabela(self, df:pd.DataFrame)->pd.DataFrame:
 
         df = TabelaDataframe.validate(df)        
-        df = self.validar_tabela(df)
-
 
         return df
 
@@ -81,7 +79,7 @@ class TabelaFactory:
 
         return df
 
-    def __call__(self, filepath:Optional[str], table_dict:Optional[list[dict]], indice:Optional[str], 
-                data_inicial:Optional[str], data_final:Optional[str])->pd.DataFrame:
+    def __call__(self, filepath:Optional[str]=None, table_dict:Optional[list[dict]]=None, indice:Optional[str]=None, 
+                data_inicial:Optional[str]=None, data_final:Optional[str]=None)->pd.DataFrame:
 
         return self.pipelne(filepath, table_dict, indice, data_inicial, data_final)

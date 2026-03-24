@@ -1,18 +1,23 @@
 import streamlit as st
 from streamlit.delta_generator import DeltaGenerator
+from app.state_manager import AppStateManager
 
 class SimulationTrigger:
-    def __init__(self) -> None:
-        if "run_pipeline" not in st.session_state:
-            st.session_state.run_pipeline = False
+    def __init__(self, state_manager: AppStateManager) -> None:
+        self.sm = state_manager
+        self.__ensure_state()
+
+    def __ensure_state(self) -> None:
+        # Garante que a flag de execução existe no namespace
+        try:
+            self.sm.get_flag("run_pipeline")
+        except KeyError:
+            self.sm.set_flag("run_pipeline", False)
 
     def render(self, container: DeltaGenerator) -> None:
         with container:
-            # Removi o @st.fragment daqui. 
-            # Para que o botão de "Iniciar" libere o resto do script, 
-            # o Streamlit precisa rodar o arquivo de cima a baixo.
-            
-            is_running = st.session_state.run_pipeline
+            # Recupera o estado atual através do manager
+            is_running = self.sm.get_flag("run_pipeline")
             
             if is_running:
                 col_main, col_reset = st.columns([1, 1])
@@ -20,20 +25,25 @@ class SimulationTrigger:
                 _, col_main, _ = st.columns([1, 2, 1])
 
             with col_main:
-                # Botão de Iniciar
                 if st.button(
                     "Simulação Inicializada" if is_running else "Iniciar a simulação", 
                     type="primary", 
-                    disabled=is_running
+                    disabled=is_running,
+                    use_container_width=True
                 ):
-                    st.session_state.run_pipeline = True
-                    st.rerun() # Agora ele dá trigger no script todo
+                    # Define a flag no manager e dispara o rerun global
+                    self.sm.set_flag("run_pipeline", True)
+                    st.rerun() 
             
             if is_running:
                 with col_reset:
-                    # Botão de Reiniciar
-                    if st.button("Reiniciar simulação", type="secondary"):
-                        st.session_state.run_pipeline = False
+                    if st.button(
+                        "Reiniciar simulação", 
+                        type="secondary",
+                        use_container_width=True
+                    ):
+                        # Reseta a flag e reinicia o app
+                        self.sm.set_flag("run_pipeline", False)
                         st.rerun()
 
     def __call__(self, container: DeltaGenerator) -> None:
