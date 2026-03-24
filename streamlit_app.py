@@ -8,13 +8,19 @@ st.set_page_config(
     page_title="SimReajuste - APPGG SP",
     page_icon=":chart_with_upwards_trend:"
 )
+
+nav_items = [
+    {"label": "📊 Sobre o Projeto", "anchor": "sobre-o-simreajuste"},
+    {"label": "⚙️ Dados e Pipeline", "anchor": "carregamento-e-tratamento-dos-dados-de-servidores-ativos"}
+]
+
 header = st.empty()
 sobre = st.empty()
 pipeline_inicial  = st.empty()
 
 with header.container():
     container_section = st.container()
-    header_section = HeaderSection(container_section)
+    header_section = HeaderSection(container_section, nav_items)
     header_section()
 
 with sobre.container():

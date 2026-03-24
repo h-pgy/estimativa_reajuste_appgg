@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit.delta_generator import DeltaGenerator
+from app.components.navbar import Navbar
 from config import LOGO_IMG
 
 class Header:
@@ -15,6 +16,5 @@ class Header:
             st.divider()
 
     def __call__(self, container:DeltaGenerator)->None:
-
         with container:
             self.render()
