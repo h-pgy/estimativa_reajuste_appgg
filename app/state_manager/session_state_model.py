@@ -1,12 +1,14 @@
 from pydantic import BaseModel, field_validator, ConfigDict
 import pandas as pd
 from collections import OrderedDict
+from typing import Union
 from core.models.simulation_step import SimulationStep
 
 class SessionStateNamespace(BaseModel):
 
     name: str
     data: OrderedDict[str, pd.DataFrame]
+    constants: OrderedDict[str, Union[str, int, float]]
     steps: OrderedDict[str, SimulationStep]
     flags: OrderedDict[str, bool]
 

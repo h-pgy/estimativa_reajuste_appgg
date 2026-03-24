@@ -5,6 +5,7 @@ from core.models.simulation_step import SimulationStep
 from streamlit.runtime.state.session_state_proxy import SessionStateProxy
 from collections import OrderedDict
 from pydantic import TypeAdapter
+from typing import Union
 
 class AppStateManager:
 
@@ -51,7 +52,7 @@ class AppStateManager:
         if namespace_name in state:
             namespace_obj = self.__get_saved_namespace(namespace_name, state)
         else:
-            namespace_obj = SessionStateNamespace(name=namespace_name, data=OrderedDict(), steps=OrderedDict(), flags=OrderedDict())
+            namespace_obj = SessionStateNamespace(name=namespace_name, data=OrderedDict(), steps=OrderedDict(), flags=OrderedDict(), constants=OrderedDict())
         state[namespace_name] = namespace_obj
         
         return namespace_obj
@@ -107,5 +108,15 @@ class AppStateManager:
         if flag_name not in self.namespace.flags:
             raise KeyError(f'Flag "{flag_name}" não encontrada no namespace "{self.namespace_name}".')
         return self.namespace.flags[flag_name]
+    
+    def set_constant(self, constant_name:str, value:Union[int, float, str])->None:
+        if not isinstance(value, (int, float, str)):
+            raise ValueError('O valor do constant deve ser do tipo int, float ou str.')
+        self.namespace.constants[constant_name] = value
+
+    def get_constant(self, constant_name:str)->Union[int, float, str]:
+        if constant_name not in self.namespace.constants:
+            raise KeyError(f'Constant "{constant_name}" não encontrada no namespace "{self.namespace_name}".')
+        return self.namespace.constants[constant_name]
     
 
