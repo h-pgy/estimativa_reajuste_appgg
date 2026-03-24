@@ -37,46 +37,48 @@ class PipelineStatus:
 
     def status_pipeline(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
 
-        with container:
-            st.markdown(f"#### {pipeline.name}")
-            progress=0
-            progress_bar = st.progress(0)
-            qtd_steps = pipeline.num_steps
-            step_size = 1/qtd_steps
-            step_gen = pipeline.execute()
-            with st.status("Preparando execução...", expanded=True) as status:
-                for i in range(qtd_steps):
-                    with st.container(border=True):
-                        cols = st.columns(3)
-                        with st.spinner(f"Executando o processo {i+1} de {qtd_steps}..."):
-                            #hack para aparecer na UI
-                            time.sleep(2)
+        st.markdown(f"#### {pipeline.name}")
+        progress=0
+        progress_bar = st.progress(0)
+        qtd_steps = pipeline.num_steps
+        step_size = 1/qtd_steps
+        step_gen = pipeline.execute()
+        with st.status("Preparando execução...", expanded=True) as status:
+            for i in range(qtd_steps):
+                with st.container(border=True):
+                    cols = st.columns(3)
+                    with st.spinner(f"Executando o processo {i+1} de {qtd_steps}..."):
+                        #hack para aparecer na UI
+                        time.sleep(2)
+                        step = next(step_gen)
+                        state.add_step(step)
+                        if step.initialized and not step.finished:
+                            with cols[0]:
+                                self.initialized(step)
                             step = next(step_gen)
-                            state.add_step(step)
-                            if step.initialized and not step.finished:
-                                with cols[0]:
-                                    self.initialized(step)
-                                step = next(step_gen)
-                            if step.finished:
-                                i += 1
-                                progress+=step_size
-                                progress_bar.progress(progress)
-                                with cols[1]:
-                                    if step.error:
-                                        self.error(step, status)
-                                        break
-                                    if step.sucess:
-                                        self.sucess(step, state)
-                                        with cols[2]:
-                                            self.render_data(step)
+                        if step.finished:
+                            i += 1
+                            progress+=step_size
+                            progress_bar.progress(progress)
+                            with cols[1]:
+                                if step.error:
+                                    self.error(step, status)
+                                    break
+                                if step.sucess:
+                                    self.sucess(step, state)
+                                    with cols[2]:
+                                        self.render_data(step)
 
-            time.sleep(2)
-            status.update(label = "Execução finalizada! Clique aqui para acessar os detalhes", state="complete")
+        time.sleep(2)
+        status.update(label = "Execução finalizada! Clique aqui para acessar os detalhes", state="complete")
         return state
 
     def __call__(self, pipeline:SimulationCommand, state:AppStateManager, container:DeltaGenerator)->AppStateManager:
 
-        return self.status_pipeline(pipeline, state, container)
+        with container:
+            internal_container = st.container(border=True)
+            with internal_container:
+                return self.status_pipeline(pipeline, state, container)
                     
 
 
