@@ -20,7 +20,7 @@ if "run_pipeline" not in st.session_state:
 
 header = st.empty()
 sobre = st.empty()
-cta_container = st.container()
+cta_placeholder = st.empty()
 pipeline_inicial  = st.empty()
 
 with header.container():
@@ -35,13 +35,14 @@ with sobre.container():
     about_section = AboutSection(container_section)
     about_section()
 
-# 3. Botão de Ação (CTA)
-with cta_container:
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        # Botão com tipo 'primary' (cor de destaque do tema)
-        if st.button("Iniciar a simulação", type="primary", use_container_width=True):
-            st.session_state.run_pipeline = True    
+# Lógica do Botão (SÓ APARECE SE NÃO FOI CLICADO)
+if not st.session_state.run_pipeline:
+    with cta_placeholder.container():
+        _, col_btn, _ = st.columns([1, 2, 1])
+        with col_btn:
+            if st.button("Iniciar a simulação", type="primary", use_container_width=True):
+                st.session_state.run_pipeline = True
+                st.rerun()  
 
 if st.session_state.run_pipeline:
     with pipeline_inicial.container():

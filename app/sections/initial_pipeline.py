@@ -2,6 +2,7 @@ from app.components.pipeline_status import PipelineStatus
 from app.components.microdados import Microdados
 from app.components.initial_pipeline_about import AboutSection
 from app.state_manager import AppStateManager
+from app.components.descriptor_df_original import DataSummaryComponent
 from streamlit.delta_generator import DeltaGenerator
 from core.simulator.initial_command import InitialCommand
 import streamlit as st
@@ -32,8 +33,9 @@ class InitialPipelineSection:
                 st.subheader("Dados originais tratados")
                 st.write("Abaixo os dados tratrados podem ser explorados e é possível também fazer o download dos mesmos.")
             df_final = state.get_data('dados_finais')
+            summary = DataSummaryComponent(df_final)
             self.microdados(df_final, data_name='Dados origignais tratados', 
-                            explicacao='A tabela ao lado consiste nos dados extraídos da relação de servidores ativos tratados para propiciar a análise.',
+                            explicacao=summary(),
                             component_container=container_df_final)
             
     
