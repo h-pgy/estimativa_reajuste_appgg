@@ -15,7 +15,7 @@ class HeaderSection:
     def render(self)->None:
 
         with self.container:
-            navbar_container=st.container(border=True)
+            navbar_container=st.container()
             self.navbar(navbar_container)
             header_container = st.container()
             self.header(header_container)

@@ -11,9 +11,9 @@ st.set_page_config(
 )
 
 nav_items = [
-    {"label": "📊 Sobre o Projeto", "anchor": "sobre-o-simreajuste"},
+    {"label": "📊 Sobre o Projeto", "anchor": "sim-reajuste"},
     {"label": "⚙️ Parâmetros da Simulação", "anchor": "parametros-da-simulacao"},
-    {"label": "🛠️ Dados e Pipeline", "anchor": "carregamento-e-tratamento-dos-dados-de-servidores-ativos"}
+    {"label": "🛠️ Dados Originais", "anchor": "carregamento-e-tratamento-dos-dados-de-servidores-ativos"}
 ]
 
 # 2. Inicialização do Session State
