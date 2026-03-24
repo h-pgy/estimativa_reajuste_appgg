@@ -15,3 +15,12 @@ def solve_fpath(file:str, parent_dir:Optional[str]=None)->str:
         file = os.path.join(parent_dir, file)
 
     return os.path.abspath(file)
+
+
+def solve_dir_path(target_dir:str, parent_dir:Optional[str]=None)->str:
+
+    if parent_dir is not None:
+        parent_dir = create_if_not_exists(parent_dir)
+        target_dir = os.path.join(parent_dir, target_dir)
+    
+    return create_if_not_exists(target_dir)

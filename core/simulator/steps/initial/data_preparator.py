@@ -34,7 +34,8 @@ class Preparator:
         return df
 
     def filtrar_para_membros_carreira(self, df:pd.DataFrame, cargo_base:str=CARGO_BASE)->pd.DataFrame:
-
+        
+        df['cargo_base'] = df['cargo_base'].fillna('Não informado').astype(str)
         df = df[df['cargo_base'].str.startswith(cargo_base)]
         df = df.reset_index(drop=True)
 
